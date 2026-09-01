@@ -64,6 +64,9 @@ textarea {
   min-height: 120px;
   resize: none;
 }
+input {
+  height: 52px;
+}
 button {
   width: 100%;
   border: 0;
@@ -77,10 +80,6 @@ button {
 }
 button:active {
   transform: scale(.98);
-}
-.secondary-button {
-  background: #e5e5ea;
-  color: #1c1c1e;
 }
 .delete {
   background: #ff3b30;
@@ -122,6 +121,18 @@ button:active {
   font-size: 14px;
   line-height: 1.5;
 }
+.empty {
+  color: #8e8e93;
+  text-align: center;
+  padding: 15px 5px;
+  font-size: 14px;
+}
+.hidden {
+  display: none;
+}
+/* ========================= */
+/* NAVIGATION */
+/* ========================= */
 .nav {
   position: fixed;
   bottom: 0;
@@ -136,6 +147,7 @@ button:active {
   z-index: 10;
 }
 .nav button {
+  width: 20%;
   background: none;
   color: #8e8e93;
   margin: 0;
@@ -152,15 +164,9 @@ button:active {
   font-size: 23px;
   margin-bottom: 3px;
 }
-.hidden {
-  display: none;
-}
-.empty {
-  color: #8e8e93;
-  text-align: center;
-  padding: 15px 5px;
-  font-size: 14px;
-}
+/* ========================= */
+/* CALENDRIER */
+/* ========================= */
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -177,10 +183,6 @@ button:active {
   margin: 0;
   font-size: 14px;
 }
-.calendar-day.selected {
-  background: #007aff;
-  color: white;
-}
 .calendar-day.has-data {
   font-weight: 700;
 }
@@ -188,18 +190,22 @@ button:active {
   text-align: center;
   color: #8e8e93;
   font-size: 11px;
+  padding-bottom: 5px;
 }
+/* ========================= */
+/* GRAPHIQUE */
+/* ========================= */
 .chart {
   width: 100%;
-  height: 200px;
+  min-height: 180px;
   background: #f2f2f7;
   border-radius: 15px;
   margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8e8e93;
+  padding: 20px;
+  color: #636366;
   font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
 }
 </style>
 </head>
@@ -212,9 +218,9 @@ Alimentation
 </h1>
 </header>
 <div class="content">
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- ALIMENTATION -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <section id="food" class="page">
 <div class="card">
 <h2>🍽️ Alimentation</h2>
@@ -249,9 +255,9 @@ Analyser
 <div id="foodEntries"></div>
 </div>
 </section>
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- POIDS -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <section id="weight" class="page hidden">
 <div class="card">
 <h2>⚖️ Ton poids</h2>
@@ -260,13 +266,13 @@ Sauvegarder
 </button>
 </div>
 <div class="card">
-<h2>Mesures</h2>
+<h2>Mesures du jour</h2>
 <div id="weightEntries"></div>
 </div>
 </section>
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- EXERCICE -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <section id="exercise" class="page hidden">
 <div class="card">
 <h2>🏃 Exercice</h2>
@@ -283,18 +289,18 @@ Analyser
 <div id="exerciseEntries"></div>
 </div>
 </section>
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- TRAVAIL -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <section id="work" class="page hidden">
 <div class="card">
 <h2>💼 Travail</h2>
 <textarea
 id="workInput"
-placeholder="Qu'est-ce que tu as fait comme travail aujourd'hui ?">
+placeholder="Exemple : Walmart de 9h à 17h, pause de 30 min">
 </textarea>
 <button onclick="addWork()">
-Analyser
+Sauvegarder
 </button>
 </div>
 <div class="card">
@@ -302,9 +308,9 @@ Analyser
 <div id="workEntries"></div>
 </div>
 </section>
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- HISTORIQUE -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <section id="history" class="page hidden">
 <div class="card">
 <h2>📅 Historique</h2>
@@ -319,14 +325,16 @@ Aujourd'hui
 <div class="card">
 <h2>📈 Évolution du poids</h2>
 <div class="chart" id="weightChart">
-Le graphique apparaîtra ici.
+
+Aucune donnée de poids pour le moment.
+
 </div>
 </div>
 </section>
 </div>
-<!-- ==================== -->
+<!-- ================================================= -->
 <!-- NAVIGATION -->
-<!-- ==================== -->
+<!-- ================================================= -->
 <nav class="nav">
 
 🍽️
@@ -361,12 +369,16 @@ Historique
 </nav>
 </div>
 <script>
-/* ========================= */
+/* ================================================= */
 /* DATE */
-/* ========================= */
+/* ================================================= */
 const today = new Date();
 const todayKey =
-today.toISOString().split("T")[0];
+today.getFullYear() +
+"-" +
+String(today.getMonth() + 1).padStart(2, "0") +
+"-" +
+String(today.getDate()).padStart(2, "0");
 document.getElementById("date").textContent =
 today.toLocaleDateString("fr-CA", {
 weekday: "long",
@@ -374,9 +386,9 @@ year: "numeric",
 month: "long",
 day: "numeric"
 });
-/* ========================= */
+/* ================================================= */
 /* DONNÉES */
-/* ========================= */
+/* ================================================= */
 let foods =
 JSON.parse(localStorage.getItem("foods") || "[]");
 let weights =
@@ -385,17 +397,23 @@ let exercises =
 JSON.parse(localStorage.getItem("exercises") || "[]");
 let works =
 JSON.parse(localStorage.getItem("works") || "[]");
-/* ========================= */
+/* ================================================= */
 /* NAVIGATION */
-/* ========================= */
+/* ================================================= */
 function showPage(page, button) {
-document.querySelectorAll(".page")
-.forEach(p => p.classList.add("hidden"));
+document
+.querySelectorAll(".page")
+.forEach(p => {
+p.classList.add("hidden");
+});
 document
 .getElementById(page)
 .classList.remove("hidden");
-document.querySelectorAll(".nav button")
-.forEach(b => b.classList.remove("active"));
+document
+.querySelectorAll(".nav button")
+.forEach(b => {
+b.classList.remove("active");
+});
 button.classList.add("active");
 const titles = {
 food: "Alimentation",
@@ -412,22 +430,24 @@ renderHistory(todayKey);
 renderWeightChart();
 }
 }
-/* ========================= */
+/* ================================================= */
 /* ALIMENTATION */
-/* ========================= */
+/* ================================================= */
 function addFood() {
 const input =
 document.getElementById("foodInput");
 const text =
 input.value.trim();
 if(!text) {
-alert("Écris d'abord ce que tu as mangé.");
+alert(
+"Écris d'abord ce que tu as mangé."
+);
 return;
 }
 /*
-TEMPORAIRE :
-Valeurs de démonstration.
-Nous connecterons la vraie IA plus tard.
+IMPORTANT :
+Ces valeurs sont TEMPORAIRES.
+L'IA sera ajoutée plus tard.
 */
 const estimate = {
 calories: 620,
@@ -468,7 +488,7 @@ estimate.sodium +
 if(!confirmation) {
 return;
 }
-const entry = {
+foods.push({
 id: Date.now(),
 text: text,
 calories: estimate.calories,
@@ -480,8 +500,7 @@ sugar: estimate.sugar,
 sodium: estimate.sodium,
 date: new Date().toISOString(),
 day: todayKey
-};
-foods.push(entry);
+});
 localStorage.setItem(
 "foods",
 JSON.stringify(foods)
@@ -489,9 +508,9 @@ JSON.stringify(foods)
 input.value = "";
 renderFoods();
 }
-/* ========================= */
+/* ================================================= */
 /* AFFICHER ALIMENTATION */
-/* ========================= */
+/* ================================================= */
 function renderFoods() {
 const container =
 document.getElementById("foodEntries");
@@ -539,9 +558,9 @@ Math.round(totalCarbs) + " g";
 document.getElementById("fat").textContent =
 Math.round(totalFat) + " g";
 }
-/* ========================= */
+/* ================================================= */
 /* SUPPRIMER ALIMENT */
-/* ========================= */
+/* ================================================= */
 function deleteFood(id) {
 foods =
 foods.filter(food => food.id !== id);
@@ -551,16 +570,18 @@ JSON.stringify(foods)
 );
 renderFoods();
 }
-/* ========================= */
+/* ================================================= */
 /* POIDS */
-/* ========================= */
+/* ================================================= */
 function addWeight() {
 const input =
 document.getElementById("weightInput");
 const value =
 parseFloat(input.value);
-if(isNaN(value)) {
-alert("Entre ton poids.");
+if(isNaN(value) || value <= 0) {
+alert(
+"Entre un poids valide."
+);
 return;
 }
 weights.push({
@@ -576,11 +597,13 @@ JSON.stringify(weights)
 input.value = "";
 renderWeights();
 renderWeightChart();
-alert("Poids enregistré !");
+alert(
+"⚖️ Poids enregistré !"
+);
 }
-/* ========================= */
+/* ================================================= */
 /* AFFICHER POIDS */
-/* ========================= */
+/* ================================================= */
 function renderWeights() {
 const container =
 document.getElementById("weightEntries");
@@ -598,6 +621,9 @@ container.innerHTML += `
 <div class="entry-title">
 ${w.weight} kg
 </div>
+<div class="entry-info">
+Enregistré aujourd'hui
+</div>
 <button
 class="delete"
 onclick="deleteWeight(${w.id})">
@@ -607,9 +633,9 @@ Supprimer
 `;
 });
 }
-/* ========================= */
+/* ================================================= */
 /* SUPPRIMER POIDS */
-/* ========================= */
+/* ================================================= */
 function deleteWeight(id) {
 weights =
 weights.filter(w => w.id !== id);
@@ -620,22 +646,25 @@ JSON.stringify(weights)
 renderWeights();
 renderWeightChart();
 }
-/* ========================= */
+/* ================================================= */
 /* EXERCICE */
-/* ========================= */
+/* ================================================= */
 function addExercise() {
 const input =
 document.getElementById("exerciseInput");
 const text =
 input.value.trim();
 if(!text) {
-alert("Écris d'abord ton exercice.");
+alert(
+"Écris d'abord ton exercice."
+);
 return;
 }
 /*
 TEMPORAIRE :
-L'estimation des calories sera faite
-par l'IA plus tard.
+Calories fictives pour tester
+le fonctionnement de l'application.
+L'IA pourra calculer cela plus tard.
 */
 const estimateCalories = 350;
 const confirmation = confirm(
@@ -664,9 +693,9 @@ JSON.stringify(exercises)
 input.value = "";
 renderExercises();
 }
-/* ========================= */
+/* ================================================= */
 /* AFFICHER EXERCICES */
-/* ========================= */
+/* ================================================= */
 function renderExercises() {
 const container =
 document.getElementById("exerciseEntries");
@@ -696,9 +725,9 @@ Supprimer
 `;
 });
 }
-/* ========================= */
+/* ================================================= */
 /* SUPPRIMER EXERCICE */
-/* ========================= */
+/* ================================================= */
 function deleteExercise(id) {
 exercises =
 exercises.filter(e => e.id !== id);
@@ -708,16 +737,18 @@ JSON.stringify(exercises)
 );
 renderExercises();
 }
-/* ========================= */
+/* ================================================= */
 /* TRAVAIL */
-/* ========================= */
+/* ================================================= */
 function addWork() {
 const input =
 document.getElementById("workInput");
 const text =
 input.value.trim();
 if(!text) {
-alert("Écris d'abord tes heures de travail.");
+alert(
+"Écris d'abord ce que tu as fait au travail."
+);
 return;
 }
 const confirmation = confirm(
@@ -742,9 +773,9 @@ JSON.stringify(works)
 input.value = "";
 renderWorks();
 }
-/* ========================= */
+/* ================================================= */
 /* AFFICHER TRAVAIL */
-/* ========================= */
+/* ================================================= */
 function renderWorks() {
 const container =
 document.getElementById("workEntries");
@@ -762,6 +793,15 @@ container.innerHTML += `
 <div class="entry-title">
 ${escapeHTML(w.text)}
 </div>
+<div class="entry-info">
+${new Date(w.date).toLocaleTimeString(
+"fr-CA",
+{
+hour: "2-digit",
+minute: "2-digit"
+}
+)}
+</div>
 <button
 class="delete"
 onclick="deleteWork(${w.id})">
@@ -771,9 +811,9 @@ Supprimer
 `;
 });
 }
-/* ========================= */
+/* ================================================= */
 /* SUPPRIMER TRAVAIL */
-/* ========================= */
+/* ================================================= */
 function deleteWork(id) {
 works =
 works.filter(w => w.id !== id);
@@ -783,40 +823,81 @@ JSON.stringify(works)
 );
 renderWorks();
 }
-/* ========================= */
+/* ================================================= */
 /* CALENDRIER */
-/* ========================= */
+/* ================================================= */
 function renderCalendar() {
 const calendar =
 document.getElementById("calendar");
 calendar.innerHTML = "";
 const now = new Date();
-const year = now.getFullYear();
-const month = now.getMonth();
+const year =
+now.getFullYear();
+const month =
+now.getMonth();
 const firstDay =
-new Date(year, month, 1).getDay();
+new Date(
+year,
+month,
+1
+).getDay();
 const daysInMonth =
-new Date(year, month + 1, 0).getDate();
+new Date(
+year,
+month + 1,
+0
+).getDate();
 const names =
 ["D","L","M","M","J","V","S"];
 names.forEach(name => {
 calendar.innerHTML +=
-`<div class="day-name">${name}</div>`;
+`
+<div class="day-name">
+${name}
+</div>
+`;
 });
-for(let i = 0; i < firstDay; i++) {
+for(
+let i = 0;
+i < firstDay;
+i++
+) {
 calendar.innerHTML +=
 `<div></div>`;
 }
-for(let day = 1; day <= daysInMonth; day++) {
+for(
+let day = 1;
+day <= daysInMonth;
+day++
+) {
 const date =
-new Date(year, month, day);
+new Date(
+year,
+month,
+day
+);
 const key =
-date.toISOString().split("T")[0];
+year +
+"-" +
+String(month + 1).padStart(2, "0") +
+"-" +
+String(day).padStart(2, "0");
 const hasData =
-foods.some(x => x.day === key) ||
-weights.some(x => x.day === key) ||
-exercises.some(x => x.day === key) ||
-works.some(x => x.day === key);
+foods.some(
+x => x.day === key
+)
+||
+weights.some(
+x => x.day === key
+)
+||
+exercises.some(
+x => x.day === key
+)
+||
+works.some(
+x => x.day === key
+);
 calendar.innerHTML += `
 <button
 class="calendar-day ${hasData ? "has-data" : ""}"
@@ -826,9 +907,9 @@ ${day}
 `;
 }
 }
-/* ========================= */
-/* HISTORIQUE D'UNE DATE */
-/* ========================= */
+/* ================================================= */
+/* HISTORIQUE */
+/* ================================================= */
 function renderHistory(day) {
 const date =
 new Date(day + "T12:00:00");
@@ -845,7 +926,9 @@ day: "numeric"
 }
 );
 const container =
-document.getElementById("historyDetails");
+document.getElementById(
+"historyDetails"
+);
 container.innerHTML = "";
 const dayFoods =
 foods.filter(x => x.day === day);
@@ -865,11 +948,18 @@ container.innerHTML =
 '<div class="empty">Aucune donnée pour cette journée.</div>';
 return;
 }
+/* ALIMENTATION */
 if(dayFoods.length) {
 let calories = 0;
-dayFoods.forEach(x =>
-calories += x.calories
-);
+let protein = 0;
+let carbs = 0;
+let fat = 0;
+dayFoods.forEach(x => {
+calories += x.calories;
+protein += x.protein;
+carbs += x.carbs;
+fat += x.fat;
+});
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
@@ -877,35 +967,48 @@ container.innerHTML += `
 </div>
 <div class="entry-info">
 ${dayFoods.length} entrée(s)<br>
-${Math.round(calories)} kcal
+${Math.round(calories)} kcal<br>
+${Math.round(protein)} g protéines<br>
+${Math.round(carbs)} g glucides<br>
+${Math.round(fat)} g lipides
 </div>
 </div>
 `;
 }
+/* POIDS */
 if(dayWeights.length) {
+const latest =
+dayWeights[dayWeights.length - 1];
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
 ⚖️ Poids
 </div>
 <div class="entry-info">
-${dayWeights[dayWeights.length - 1].weight} kg
+${latest.weight} kg
 </div>
 </div>
 `;
 }
+/* EXERCICE */
 if(dayExercises.length) {
+let exerciseCalories = 0;
+dayExercises.forEach(x => {
+exerciseCalories += x.calories;
+});
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
 🏃 Exercice
 </div>
 <div class="entry-info">
-${dayExercises.length} activité(s)
+${dayExercises.length} activité(s)<br>
+~${exerciseCalories} kcal dépensées
 </div>
 </div>
 `;
 }
+/* TRAVAIL */
 if(dayWorks.length) {
 container.innerHTML += `
 <div class="entry">
@@ -919,12 +1022,14 @@ ${dayWorks.length} entrée(s)
 `;
 }
 }
-/* ========================= */
+/* ================================================= */
 /* GRAPHIQUE POIDS */
-/* ========================= */
+/* ================================================= */
 function renderWeightChart() {
 const chart =
-document.getElementById("weightChart");
+document.getElementById(
+"weightChart"
+);
 if(!weights.length) {
 chart.textContent =
 "Aucune donnée de poids pour le moment.";
@@ -932,25 +1037,22 @@ return;
 }
 const sorted =
 [...weights].sort(
-(a,b) => new Date(a.date) - new Date(b.date)
+(a,b) =>
+new Date(a.date) -
+new Date(b.date)
 );
-const values =
-sorted.map(x => x.weight);
-const min =
-Math.min(...values);
-const max =
-Math.max(...values);
 let html =
-"<div style='width:100%;text-align:center'>";
-html +=
-"<strong>Évolution</strong><br><br>";
-sorted.slice(-10).forEach(x => {
+"<strong>Dernières mesures</strong><br><br>";
+sorted
+.slice(-10)
+.forEach(x => {
 const date =
-new Date(x.date).toLocaleDateString(
+new Date(x.date)
+.toLocaleDateString(
 "fr-CA",
 {
-month:"short",
-day:"numeric"
+month: "short",
+day: "numeric"
 }
 );
 html +=
@@ -959,21 +1061,21 @@ date +
 x.weight +
 " kg<br>";
 });
-html += "</div>";
 chart.innerHTML = html;
 }
-/* ========================= */
-/* SÉCURITÉ TEXTE */
-/* ========================= */
+/* ================================================= */
+/* SÉCURITÉ */
+/* ================================================= */
 function escapeHTML(text) {
 const div =
 document.createElement("div");
-div.textContent = text;
+div.textContent =
+text;
 return div.innerHTML;
 }
-/* ========================= */
+/* ================================================= */
 /* INITIALISATION */
-/* ========================= */
+/* ================================================= */
 renderFoods();
 renderWeights();
 renderExercises();
@@ -984,3 +1086,4 @@ renderWeightChart();
 </script>
 </body>
 </html>
+
