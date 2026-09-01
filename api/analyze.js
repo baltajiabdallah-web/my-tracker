@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   const { text, type } = req.body;
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured' });
@@ -27,22 +27,22 @@ Activité: "${text}"`;
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-1',
-        max_tokens: 200,
-        messages: [{ role: 'user', content: prompt }]
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 200
       })
     });
 
     const data = await response.json();
-    const textContent = data.content[0].text;
+    const textContent = data.choices[0].message.content;
     
     const jsonMatch = textContent.match(/\{[\s\S]*\}/);
     const result = JSON.parse(jsonMatch[0]);
