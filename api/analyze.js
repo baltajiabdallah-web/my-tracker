@@ -13,15 +13,13 @@ export default async function handler(req, res) {
   let prompt = '';
 
   if (type === 'food') {
-    prompt = `Analyse ce repas et estime UNIQUEMENT les calories totales.
-Réponse en JSON: {"calories": NUMBER}
+    prompt = `Analyse ce repas et estime UNIQUEMENT les calories totales. Réponds UNIQUEMENT avec ce format JSON, rien d'autre:
+{"calories": NUMBER}
 
 Repas: "${text}"`;
   } else if (type === 'exercise') {
-    prompt = `Analyse cet exercice et estime les calories brûlées.
-Si la personne donne un chiffre (ex: "j'ai brûlé 420 kcal"), utilise CE chiffre.
-Sinon, estime basé sur le type d'activité.
-Réponse en JSON: {"calories": NUMBER}
+    prompt = `Analyse cet exercice et estime les calories brûlées. Si la personne donne un chiffre, utilise-le. Réponds UNIQUEMENT avec ce format JSON:
+{"calories": NUMBER}
 
 Activité: "${text}"`;
   }
@@ -36,19 +34,34 @@ Activité: "${text}"`;
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 200
+        temperature: 0,
+        max_tokens: 100
       })
     });
 
-    const data = await response.json();
-    const textContent = data.choices[0].message.content;
-    
-    const jsonMatch = textContent.match(/\{[\s\S]*\}/);
-    const result = JSON.parse(jsonMatch[0]);
+    if (!response.ok) {
+      const error = await response.json();
+      return res.status(500).json({ error: error.error?.message || 'OpenAI error' });
+    }
 
-    res.status(200).json(result);
+    const data = await response.json();
+    
+    if (!data.choices || !data.choices[0]) {
+      return res.status(500).json({ error: 'No response from OpenAI' });
+    }
+
+    const textContent = data.choices[0].message.content.trim();
+    
+    try {
+      const result = JSON.parse(textContent);
+      if (!result.calories) {
+        return res.status(500).json({ error: 'No calories in response' });
+      }
+      return res.status(200).json(result);
+    } catch (e) {
+      return res.status(500).json({ error: 'Invalid JSON: ' + textContent });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
