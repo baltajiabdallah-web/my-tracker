@@ -1,471 +1,736 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>My Tracker</title>
-<style>
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  background: #f5f5f7;
-  color: #1c1c1e;
-}
-.app {
-  max-width: 600px;
-  margin: auto;
-  min-height: 100vh;
-  padding-bottom: 90px;
-}
-header {
-  padding: 55px 20px 20px;
-}
-.date {
-  color: #8e8e93;
-  font-size: 15px;
-  margin-bottom: 5px;
-}
-h1 {
-  margin: 0;
-  font-size: 32px;
-}
-.content {
-  padding: 0 20px;
-}
-.card {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
-}
-.card h2 {
-  margin-top: 0;
-  font-size: 20px;
-}
-textarea,
-input {
-  width: 100%;
-  border: 0;
-  background: #f2f2f7;
-  border-radius: 14px;
-  padding: 15px;
-  font-size: 16px;
-  outline: none;
-  font-family: inherit;
-}
-textarea {
-  min-height: 120px;
-  resize: none;
-}
-button {
-  width: 100%;
-  border: 0;
-  border-radius: 14px;
-  padding: 15px;
-  margin-top: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  background: #007aff;
-  color: white;
-}
-button:active {
-  transform: scale(.98);
-}
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.stat {
-  background: #f2f2f7;
-  border-radius: 15px;
-  padding: 15px;
-}
-.stat strong {
-  display: block;
-  font-size: 20px;
-  margin-bottom: 4px;
-}
-.stat span {
-  color: #8e8e93;
-  font-size: 13px;
-}
-.nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 78px;
-  background: rgba(255,255,255,.94);
-  backdrop-filter: blur(15px);
-  border-top: 1px solid #ddd;
-  display: flex;
-  justify-content: space-around;
-  z-index: 10;
-}
-.nav button {
-  background: none;
-  color: #8e8e93;
-  margin: 0;
-  padding: 8px 2px;
-  border-radius: 0;
-  font-size: 11px;
-  font-weight: 500;
-}
-.nav button.active {
-  color: #007aff;
-}
-.nav-icon {
-  display: block;
-  font-size: 24px;
-  margin-bottom: 3px;
-}
-.hidden {
-  display: none;
-}
-.entry {
-  background: #f2f2f7;
-  padding: 14px;
-  border-radius: 14px;
-  margin-top: 10px;
-}
-.entry-title {
-  font-weight: 600;
-}
-.delete {
-  background: #ff3b30;
-  padding: 8px;
-  margin-top: 8px;
-  font-size: 13px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Tracker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      background: #f5f5f7;
+      color: #1c1c1e;
+    }
+    .app {
+      max-width: 600px;
+      margin: auto;
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+    header {
+      padding: 55px 20px 20px;
+    }
+    .date {
+      color: #8e8e93;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+    .content {
+      padding: 0 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+    .date-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .date-selector input {
+      flex: 1;
+    }
+    .date-selector button {
+      padding: 15px 20px;
+      margin: 0;
+      width: auto;
+      font-size: 14px;
+    }
+    textarea,
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      border: 0;
+      background: #f2f2f7;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
+      outline: none;
+      font-family: inherit;
+    }
+    textarea {
+      min-height: 100px;
+      resize: none;
+    }
+    input[type="number"] {
+      font-size: 18px;
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 15px;
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #007aff;
+      color: white;
+    }
+    button:active {
+      transform: scale(.98);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat {
+      background: #f2f2f7;
+      border-radius: 15px;
+      padding: 15px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .stat span {
+      color: #8e8e93;
+      font-size: 13px;
+    }
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 78px;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-around;
+      z-index: 10;
+    }
+    .nav button {
+      background: none;
+      color: #8e8e93;
+      margin: 0;
+      padding: 8px 2px;
+      border-radius: 0;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .nav button.active {
+      color: #007aff;
+    }
+    .nav-icon {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 3px;
+    }
+    .hidden {
+      display: none;
+    }
+    .entry {
+      background: #f2f2f7;
+      padding: 14px;
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+    .entry-title {
+      font-weight: 600;
+    }
+    .entry-value {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .delete {
+      background: #ff3b30;
+      padding: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .loading {
+      text-align: center;
+      color: #8e8e93;
+      padding: 10px;
+    }
+    .confirmation {
+      background: #f9f9f9;
+      border: 1px solid #e5e5e7;
+      border-radius: 14px;
+      padding: 15px;
+      margin-top: 12px;
+    }
+    .confirmation h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
+    .confirmation-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #007aff;
+      margin-bottom: 12px;
+    }
+    .confirmation-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .confirmation-buttons button {
+      margin: 0;
+    }
+    .btn-cancel {
+      background: #e5e5e7 !important;
+      color: #1c1c1e !important;
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-<header>
-  <div class="date" id="date"></div>
-  <h1 id="title">Alimentation</h1>
-</header>
-<div class="content">
-<!-- ALIMENTATION -->
-<section id="food" class="page">
-<div class="card">
-<h2>🍽️ Alimentation</h2>
-<textarea id="foodInput"
-placeholder="Qu'est-ce que tu as mangé aujourd'hui ?"></textarea>
+  <div class="app">
+    <header>
+      <div class="date" id="displayDate"></div>
+      <h1 id="title">Alimentation</h1>
+    </header>
+    <div class="content">
+      <!-- ALIMENTATION -->
+      <section id="food" class="page">
+        <div class="card">
+          <h2>🍽️ Alimentation</h2>
+          <div class="date-selector">
+            <input type="date" id="foodDate">
+            <button onclick="setFoodDateToday()" style="width: auto;">Aujourd'hui</button>
+          </div>
+          <textarea id="foodInput" placeholder="Qu'est-ce que tu as mangé ?"></textarea>
+          <button onclick="analyzeFoodClick()">Analyser</button>
+        </div>
+        <div class="card">
+          <h2>Résumé du jour</h2>
+          <div id="foodConfirmation" class="hidden"></div>
+          <div class="stat">
+            <strong id="caloriesDisplay">0 kcal</strong>
+            <span>Calories</span>
+          </div>
+          <div id="foodEntries"></div>
+        </div>
+      </section>
 
-Analyser
+      <!-- POIDS -->
+      <section id="weight" class="page hidden">
+        <div class="card">
+          <h2>⚖️ Ton poids</h2>
+          <div class="date-selector">
+            <input type="date" id="weightDate">
+            <button onclick="setWeightDateToday()" style="width: auto;">Aujourd'hui</button>
+          </div>
+          <input type="number" id="weightInput" placeholder="Ex: 61.5" step="0.1">
+          <button onclick="saveWeight()">Sauvegarder</button>
+        </div>
+        <div class="card">
+          <h2>Poids du jour</h2>
+          <div id="weightEntries"></div>
+        </div>
+      </section>
 
-</div>
-<div class="card">
-<h2>Résumé du jour</h2>
-<div class="stats">
-<div class="stat">
-<strong id="calories">0 kcal</strong>
-<span>Calories</span>
-</div>
-<div class="stat">
-<strong id="protein">0 g</strong>
-<span>Protéines</span>
-</div>
-<div class="stat">
-<strong id="carbs">0 g</strong>
-<span>Glucides</span>
-</div>
-<div class="stat">
-<strong id="fat">0 g</strong>
-<span>Lipides</span>
-</div>
-</div>
-<div id="foodEntries"></div>
-</div>
-</section>
-<!-- POIDS -->
-<section id="weight" class="page hidden">
-<div class="card">
-<h2>⚖️ Ton poids</h2>
+      <!-- EXERCICE -->
+      <section id="exercise" class="page hidden">
+        <div class="card">
+          <h2>🏃 Exercice</h2>
+          <div class="date-selector">
+            <input type="date" id="exerciseDate">
+            <button onclick="setExerciseDateToday()" style="width: auto;">Aujourd'hui</button>
+          </div>
+          <textarea id="exerciseInput" placeholder="Qu'est-ce que tu as fait comme exercice ?"></textarea>
+          <button onclick="analyzeExerciseClick()">Analyser</button>
+        </div>
+        <div class="card">
+          <h2>Activités du jour</h2>
+          <div id="exerciseConfirmation" class="hidden"></div>
+          <div id="exerciseEntries"></div>
+        </div>
+      </section>
 
-Sauvegarder
+      <!-- TRAVAIL -->
+      <section id="work" class="page hidden">
+        <div class="card">
+          <h2>💼 Travail</h2>
+          <div class="date-selector">
+            <input type="date" id="workDate">
+            <button onclick="setWorkDateToday()" style="width: auto;">Aujourd'hui</button>
+          </div>
+          <textarea id="workInput" placeholder="Qu'est-ce que tu as fait au travail ?"></textarea>
+          <button onclick="addWork()">Ajouter</button>
+        </div>
+        <div class="card">
+          <h2>Travail du jour</h2>
+          <div id="workEntries"></div>
+        </div>
+      </section>
 
-</div>
-<div class="card">
-<h2>Mesure du jour</h2>
-<div id="weightEntries"></div>
-</div>
-</section>
-<!-- EXERCICE -->
-<section id="exercise" class="page hidden">
-<div class="card">
-<h2>🏃 Exercice</h2>
-<textarea id="exerciseInput"
-placeholder="Qu'est-ce que tu as fait comme exercice aujourd'hui ?"></textarea>
+      <!-- HISTORIQUE -->
+      <section id="history" class="page hidden">
+        <div class="card">
+          <h2>📅 Historique</h2>
+          <input type="date" id="historyDate">
+          <button onclick="loadHistoryDay()" style="margin-bottom: 16px;">Charger</button>
+        </div>
+        <div class="card" id="historySummary" class="hidden">
+          <div class="stat">
+            <strong id="historyCaloriesIn">—</strong>
+            <span>Calories consommées</span>
+          </div>
+          <div class="stat">
+            <strong id="historyCaloriesOut">—</strong>
+            <span>Calories brûlées</span>
+          </div>
+          <div class="stat">
+            <strong id="historyWeight">—</strong>
+            <span>Poids</span>
+          </div>
+          <div id="historyWork"></div>
+        </div>
+      </section>
+    </div>
 
-Analyser
+    <!-- NAVIGATION -->
+    <nav class="nav">
+      <button class="active" onclick="showPage('food', this)">
+        <span class="nav-icon">🍽️</span>
+        Alimentation
+      </button>
+      <button onclick="showPage('weight', this)">
+        <span class="nav-icon">⚖️</span>
+        Poids
+      </button>
+      <button onclick="showPage('exercise', this)">
+        <span class="nav-icon">🏃</span>
+        Exercice
+      </button>
+      <button onclick="showPage('work', this)">
+        <span class="nav-icon">💼</span>
+        Travail
+      </button>
+      <button onclick="showPage('history', this)">
+        <span class="nav-icon">📅</span>
+        Historique
+      </button>
+    </nav>
+  </div>
 
-</div>
-<div class="card">
-<h2>Activités du jour</h2>
-<div id="exerciseEntries"></div>
-</div>
-</section>
-<!-- TRAVAIL -->
-<section id="work" class="page hidden">
-<div class="card">
-<h2>💼 Travail</h2>
-<textarea id="workInput"
-placeholder="Qu'est-ce que tu as fait comme travail aujourd'hui ?"></textarea>
+  <script>
+    // GESTION DES DATES
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
 
-Analyser
+    function getToday() {
+      return formatDate(new Date());
+    }
 
-</div>
-<div class="card">
-<h2>Travail du jour</h2>
-<div id="workEntries"></div>
-</div>
-</section>
-<!-- HISTORIQUE -->
-<section id="history" class="page hidden">
-<div class="card">
-<h2>📅 Historique</h2>
-<p>Le calendrier et les statistiques apparaîtront ici.</p>
-<div class="stat">
-<strong id="historyWeight">—</strong>
-<span>Dernier poids enregistré</span>
-</div>
-</div>
-</section>
-</div>
-<!-- NAVIGATION -->
-<nav class="nav">
-<button class="active" onclick="showPage('food', this)">
-<span class="nav-icon">🍽️</span>
-Alimentation
-</button>
-<button onclick="showPage('weight', this)">
-<span class="nav-icon">⚖️</span>
-Poids
-</button>
-<button onclick="showPage('exercise', this)">
-<span class="nav-icon">🏃</span>
-Exercice
-</button>
-<button onclick="showPage('work', this)">
-<span class="nav-icon">💼</span>
-Travail
-</button>
-<button onclick="showPage('history', this)">
-<span class="nav-icon">📅</span>
-Historique
-</button>
-</nav>
-</div>
-<script>
-const today = new Date();
-document.getElementById("date").textContent =
-today.toLocaleDateString("fr-CA", {
-weekday: "long",
-year: "numeric",
-month: "long",
-day: "numeric"
-});
-let foods = JSON.parse(localStorage.getItem("foods") || "[]");
-let weights = JSON.parse(localStorage.getItem("weights") || "[]");
-let exercises = JSON.parse(localStorage.getItem("exercises") || "[]");
-let works = JSON.parse(localStorage.getItem("works") || "[]");
-function showPage(page, button) {
-document.querySelectorAll(".page").forEach(p =>
-p.classList.add("hidden")
-);
-document.getElementById(page).classList.remove("hidden");
-document.querySelectorAll(".nav button").forEach(b =>
-b.classList.remove("active")
-);
-button.classList.add("active");
-const titles = {
-food: "Alimentation",
-weight: "Poids",
-exercise: "Exercice",
-work: "Travail",
-history: "Historique"
-};
-document.getElementById("title").textContent = titles[page];
-}
-function addFood() {
-const input = document.getElementById("foodInput");
-const text = input.value.trim();
-if (!text) return;
-const entry = {
-text: text,
-calories: Math.floor(Math.random()*400)+300,
-protein: Math.floor(Math.random()*25)+15,
-carbs: Math.floor(Math.random()*50)+20,
-fat: Math.floor(Math.random()*20)+5,
-date: new Date().toISOString()
-};
-foods.push(entry);
-localStorage.setItem("foods", JSON.stringify(foods));
-input.value = "";
-renderFoods();
-alert("Estimation créée. Entrée sauvegardée !");
-}
-function renderFoods() {
-const container = document.getElementById("foodEntries");
-container.innerHTML = "";
-let totalCalories = 0;
-let totalProtein = 0;
-let totalCarbs = 0;
-let totalFat = 0;
-foods.forEach((food, index) => {
-totalCalories += food.calories;
-totalProtein += food.protein;
-totalCarbs += food.carbs;
-totalFat += food.fat;
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">${food.text}</div>
-<div>
-${food.calories} kcal ·
-${food.protein} g protéines ·
-${food.carbs} g glucides ·
-${food.fat} g lipides
-</div>
-<button class="delete"
-onclick="deleteFood(${index})">
-Supprimer
-</button>
-</div>
-`;
-});
-document.getElementById("calories").textContent =
-Math.round(totalCalories) + " kcal";
-document.getElementById("protein").textContent =
-Math.round(totalProtein) + " g";
-document.getElementById("carbs").textContent =
-Math.round(totalCarbs) + " g";
-document.getElementById("fat").textContent =
-Math.round(totalFat) + " g";
-}
-function deleteFood(index) {
-foods.splice(index,1);
-localStorage.setItem("foods", JSON.stringify(foods));
-renderFoods();
-}
-function addWeight() {
-const input = document.getElementById("weightInput");
-if (!input.value) return;
-weights.push({
-weight: parseFloat(input.value),
-date: new Date().toISOString()
-});
-localStorage.setItem("weights", JSON.stringify(weights));
-input.value = "";
-renderWeights();
-}
-function renderWeights() {
-const container =
-document.getElementById("weightEntries");
-container.innerHTML = "";
-weights.forEach((w,index) => {
-container.innerHTML += `
-<div class="entry">
-<strong>${w.weight} kg</strong>
-<button class="delete"
-onclick="deleteWeight(${index})">
-Supprimer
-</button>
-</div>
-`;
-});
-if(weights.length) {
-document.getElementById("historyWeight").textContent =
-weights[weights.length-1].weight + " kg";
-}
-}
-function deleteWeight(index) {
-weights.splice(index,1);
-localStorage.setItem("weights", JSON.stringify(weights));
-renderWeights();
-}
-function addExercise() {
-const input = document.getElementById("exerciseInput");
-const text = input.value.trim();
-if(!text) return;
-exercises.push({
-text:text,
-date:new Date().toISOString()
-});
-localStorage.setItem("exercises",
-JSON.stringify(exercises));
-input.value="";
-renderExercises();
-alert("Activité sauvegardée !");
-}
-function renderExercises() {
-const container =
-document.getElementById("exerciseEntries");
-container.innerHTML="";
-exercises.forEach((e,index)=>{
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">${e.text}</div>
-<button class="delete"
-onclick="deleteExercise(${index})">
-Supprimer
-</button>
-</div>
-`;
-});
-}
-function deleteExercise(index){
-exercises.splice(index,1);
-localStorage.setItem("exercises",
-JSON.stringify(exercises));
-renderExercises();
-}
-function addWork(){
-const input=document.getElementById("workInput");
-const text=input.value.trim();
-if(!text)return;
-works.push({
-text:text,
-date:new Date().toISOString()
-});
-localStorage.setItem("works",
-JSON.stringify(works));
-input.value="";
-renderWorks();
-alert("Travail sauvegardé !");
-}
-function renderWorks(){
-const container=document.getElementById("workEntries");
-container.innerHTML="";
-works.forEach((w,index)=>{
-container.innerHTML+=`
-<div class="entry">
-<div class="entry-title">${w.text}</div>
-<button class="delete"
-onclick="deleteWork(${index})">
-Supprimer
-</button>
-</div>
-`;
-});
-}
-function deleteWork(index){
-works.splice(index,1);
-localStorage.setItem("works",
-JSON.stringify(works));
-renderWorks();
-}
-renderFoods();
-renderWeights();
-renderExercises();
-renderWorks();
-</script>
+    function displayDate(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00');
+      return date.toLocaleDateString('fr-CA', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function updateDisplayDate(dateStr) {
+      document.getElementById('displayDate').textContent = displayDate(dateStr);
+    }
+
+    // INITIALISATION
+    let currentDate = getToday();
+    let foods = JSON.parse(localStorage.getItem('foods') || '{}');
+    let weights = JSON.parse(localStorage.getItem('weights') || '{}');
+    let exercises = JSON.parse(localStorage.getItem('exercises') || '{}');
+    let works = JSON.parse(localStorage.getItem('works') || '{}');
+
+    function initializeDateInputs() {
+      document.getElementById('foodDate').value = currentDate;
+      document.getElementById('weightDate').value = currentDate;
+      document.getElementById('exerciseDate').value = currentDate;
+      document.getElementById('workDate').value = currentDate;
+      document.getElementById('historyDate').value = currentDate;
+      updateDisplayDate(currentDate);
+    }
+
+    function setFoodDateToday() {
+      currentDate = getToday();
+      document.getElementById('foodDate').value = currentDate;
+      updateDisplayDate(currentDate);
+      renderFoods();
+    }
+
+    function setWeightDateToday() {
+      currentDate = getToday();
+      document.getElementById('weightDate').value = currentDate;
+      updateDisplayDate(currentDate);
+      renderWeights();
+    }
+
+    function setExerciseDateToday() {
+      currentDate = getToday();
+      document.getElementById('exerciseDate').value = currentDate;
+      updateDisplayDate(currentDate);
+      renderExercises();
+    }
+
+    function setWorkDateToday() {
+      currentDate = getToday();
+      document.getElementById('workDate').value = currentDate;
+      updateDisplayDate(currentDate);
+      renderWorks();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeDateInputs();
+
+      document.getElementById('foodDate').addEventListener('change', function() {
+        currentDate = this.value;
+        updateDisplayDate(currentDate);
+        renderFoods();
+      });
+
+      document.getElementById('weightDate').addEventListener('change', function() {
+        currentDate = this.value;
+        updateDisplayDate(currentDate);
+        renderWeights();
+      });
+
+      document.getElementById('exerciseDate').addEventListener('change', function() {
+        currentDate = this.value;
+        updateDisplayDate(currentDate);
+        renderExercises();
+      });
+
+      document.getElementById('workDate').addEventListener('change', function() {
+        currentDate = this.value;
+        updateDisplayDate(currentDate);
+        renderWorks();
+      });
+
+      renderFoods();
+      renderWeights();
+      renderExercises();
+      renderWorks();
+    });
+
+    // ALIMENTATION
+    async function analyzeFoodClick() {
+      const input = document.getElementById('foodInput');
+      const text = input.value.trim();
+      
+      if (!text) {
+        alert('Écris ce que tu as mangé !');
+        return;
+      }
+
+      const confirmDiv = document.getElementById('foodConfirmation');
+      confirmDiv.innerHTML = '<div class="loading">Analyse en cours...</div>';
+      confirmDiv.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, type: 'food' })
+        });
+
+        const data = await response.json();
+        const calories = data.calories || 0;
+
+        confirmDiv.innerHTML = `
+          <h3>Entrée analysée</h3>
+          <div class="confirmation-value">${calories} kcal</div>
+          <p style="margin: 0 0 12px 0; font-size: 14px;">« ${text} »</p>
+          <div class="confirmation-buttons">
+            <button class="btn-cancel" onclick="cancelFoodConfirmation()">Annuler</button>
+            <button onclick="confirmFood('${text.replace(/'/g, "\\'")}', ${calories})">Sauvegarder</button>
+          </div>
+        `;
+      } catch (error) {
+        confirmDiv.innerHTML = `<div style="color: #ff3b30;">Erreur: ${error.message}</div>`;
+      }
+    }
+
+    function cancelFoodConfirmation() {
+      document.getElementById('foodConfirmation').classList.add('hidden');
+      document.getElementById('foodInput').value = '';
+    }
+
+    function confirmFood(text, calories) {
+      if (!foods[currentDate]) {
+        foods[currentDate] = [];
+      }
+      foods[currentDate].push({ text, calories, id: Date.now() });
+      localStorage.setItem('foods', JSON.stringify(foods));
+      
+      document.getElementById('foodInput').value = '';
+      document.getElementById('foodConfirmation').classList.add('hidden');
+      renderFoods();
+    }
+
+    function renderFoods() {
+      const container = document.getElementById('foodEntries');
+      const dayFoods = foods[currentDate] || [];
+      container.innerHTML = '';
+
+      let totalCalories = 0;
+      dayFoods.forEach((food, index) => {
+        totalCalories += food.calories;
+        container.innerHTML += `
+          <div class="entry">
+            <div class="entry-title">${food.text}</div>
+            <div class="entry-value">${food.calories} kcal</div>
+            <button class="delete" onclick="deleteFood(${index})">Supprimer</button>
+          </div>
+        `;
+      });
+
+      document.getElementById('caloriesDisplay').textContent = totalCalories + ' kcal';
+    }
+
+    function deleteFood(index) {
+      if (foods[currentDate]) {
+        foods[currentDate].splice(index, 1);
+        localStorage.setItem('foods', JSON.stringify(foods));
+        renderFoods();
+      }
+    }
+
+    // POIDS
+    function saveWeight() {
+      const input = document.getElementById('weightInput');
+      const weight = parseFloat(input.value);
+
+      if (!weight || weight <= 0) {
+        alert('Entre un poids valide !');
+        return;
+      }
+
+      if (!weights[currentDate]) {
+        weights[currentDate] = [];
+      }
+      weights[currentDate] = [{ weight, id: Date.now() }];
+      localStorage.setItem('weights', JSON.stringify(weights));
+
+      input.value = '';
+      renderWeights();
+      alert('Poids sauvegardé !');
+    }
+
+    function renderWeights() {
+      const container = document.getElementById('weightEntries');
+      const dayWeights = weights[currentDate] || [];
+      container.innerHTML = '';
+
+      dayWeights.forEach((w, index) => {
+        container.innerHTML += `
+          <div class="entry">
+            <div class="entry-value">${w.weight} kg</div>
+            <button class="delete" onclick="deleteWeight(${index})">Supprimer</button>
+          </div>
+        `;
+      });
+    }
+
+    function deleteWeight(index) {
+      if (weights[currentDate]) {
+        weights[currentDate].splice(index, 1);
+        localStorage.setItem('weights', JSON.stringify(weights));
+        renderWeights();
+      }
+    }
+
+    // EXERCICE
+    async function analyzeExerciseClick() {
+      const input = document.getElementById('exerciseInput');
+      const text = input.value.trim();
+
+      if (!text) {
+        alert('Écris ton exercice !');
+        return;
+      }
+
+      const confirmDiv = document.getElementById('exerciseConfirmation');
+      confirmDiv.innerHTML = '<div class="loading">Analyse en cours...</div>';
+      confirmDiv.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, type: 'exercise' })
+        });
+
+        const data = await response.json();
+        const calories = data.calories || 0;
+
+        confirmDiv.innerHTML = `
+          <h3>Exercice analysé</h3>
+          <div class="confirmation-value">${calories} kcal</div>
+          <p style="margin: 0 0 12px 0; font-size: 14px;">« ${text} »</p>
+          <div class="confirmation-buttons">
+            <button class="btn-cancel" onclick="cancelExerciseConfirmation()">Annuler</button>
+            <button onclick="confirmExercise('${text.replace(/'/g, "\\'")}', ${calories})">Sauvegarder</button>
+          </div>
+        `;
+      } catch (error) {
+        confirmDiv.innerHTML = `<div style="color: #ff3b30;">Erreur: ${error.message}</div>`;
+      }
+    }
+
+    function cancelExerciseConfirmation() {
+      document.getElementById('exerciseConfirmation').classList.add('hidden');
+      document.getElementById('exerciseInput').value = '';
+    }
+
+    function confirmExercise(text, calories) {
+      if (!exercises[currentDate]) {
+        exercises[currentDate] = [];
+      }
+      exercises[currentDate].push({ text, calories, id: Date.now() });
+      localStorage.setItem('exercises', JSON.stringify(exercises));
+
+      document.getElementById('exerciseInput').value = '';
+      document.getElementById('exerciseConfirmation').classList.add('hidden');
+      renderExercises();
+    }
+
+    function renderExercises() {
+      const container = document.getElementById('exerciseEntries');
+      const dayExercises = exercises[currentDate] || [];
+      container.innerHTML = '';
+
+      dayExercises.forEach((e, index) => {
+        container.innerHTML += `
+          <div class="entry">
+            <div class="entry-title">${e.text}</div>
+            <div class="entry-value">${e.calories} kcal</div>
+            <button class="delete" onclick="deleteExercise(${index})">Supprimer</button>
+          </div>
+        `;
+      });
+    }
+
+    function deleteExercise(index) {
+      if (exercises[currentDate]) {
+        exercises[currentDate].splice(index, 1);
+        localStorage.setItem('exercises', JSON.stringify(exercises));
+        renderExercises();
+      }
+    }
+
+    // TRAVAIL
+    function addWork() {
+      const input = document.getElementById('workInput');
+      const text = input.value.trim();
+
+      if (!text) {
+        alert('Écris ton travail !');
+        return;
+      }
+
+      if (!works[currentDate]) {
+        works[currentDate] = [];
+      }
+      works[currentDate].push({ text, id: Date.now() });
+      localStorage.setItem('works', JSON.stringify(works));
+
+      input.value = '';
+      renderWorks();
+      alert('Travail sauvegardé !');
+    }
+
+    function renderWorks() {
+      const container = document.getElementById('workEntries');
+      const dayWorks = works[currentDate] || [];
+      container.innerHTML = '';
+
+      dayWorks.forEach((w, index) => {
+        container.innerHTML += `
+          <div class="entry">
+            <div class="entry-title">${w.text}</div>
+            <button class="delete" onclick="deleteWork(${index})">Supprimer</button>
+          </div>
+        `;
+      });
+    }
+
+    function deleteWork(index) {
+      if (works[currentDate]) {
+        works[currentDate].splice(index, 1);
+        localStorage.setItem('works', JSON.stringify(works));
+        renderWorks();
+      }
+    }
+
+    // HISTORIQUE
+    function loadHistoryDay() {
+      const date = document.getElementById('historyDate').value;
+      const summary = document.getElementById('historySummary');
+
+      const dayFoods = foods[date] || [];
+      const dayExercises = exercises[date] || [];
+      const dayWeights = weights[date] || [];
+      const dayWorks = works[date] || [];
+
+      let totalCaloriesIn = dayFoods.reduce((sum, f) => sum + f.calories, 0);
+      let totalCaloriesOut = dayExercises.reduce((sum, e) => sum + e.calories, 0);
+      let weight = dayWeights.length > 0 ? dayWeights[0].weight : null;
+
+      document.getElementById('historyCaloriesIn').textContent = totalCaloriesIn + ' kcal';
+      document.getElementById('historyCaloriesOut').textContent = totalCaloriesOut + ' kcal';
+      document.getElementById('historyWeight').textContent = weight ? weight + ' kg' : '—';
+
+      let workHTML = '';
+      if (dayWorks.length > 0) {
+        workHTML = '<div class="stat" style="grid-column: 1 / -1;"><strong>💼 Travail</strong>';
+        dayWorks.forEach(w => {
+          workHTML += `<div style="margin-top: 8px; font-size: 14px;">${w.text}</div>`;
+        });
+        workHTML += '</div>';
+      }
+
+      document.getElementById('historyWork').innerHTML = workHTML;
+      summary.classList.remove('hidden');
+    }
+
+    // NAVIGATION
+    function showPage(page, button) {
+      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+      document.getElementById(page).classList.remove('hidden');
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+      button.classList.add('active');
+
+      const titles = {
+        food: 'Alimentation',
+        weight: 'Poids',
+        exercise: 'Exercice',
+        work: 'Travail',
+        history: 'Historique'
+      };
+      document.getElementById('title').textContent = titles[page];
+    }
+  </script>
 </body>
 </html>
