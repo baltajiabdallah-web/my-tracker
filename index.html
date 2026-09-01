@@ -67,6 +67,20 @@ textarea {
 input {
   height: 52px;
 }
+.date-selector {
+  margin-bottom: 15px;
+}
+.date-selector label {
+  display: block;
+  color: #636366;
+  font-size: 13px;
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.date-selector input {
+  background: #f2f2f7;
+  height: 50px;
+}
 button {
   width: 100%;
   border: 0;
@@ -224,16 +238,23 @@ Alimentation
 <section id="food" class="page">
 <div class="card">
 <h2>🍽️ Alimentation</h2>
+<div class="date-selector">
+
+Date
+
+</div>
 <textarea
 id="foodInput"
-placeholder="Qu'est-ce que tu as mangé aujourd'hui ?">
+placeholder="Qu'est-ce que tu as mangé ?">
 </textarea>
 <button onclick="addFood()">
 Analyser
 </button>
 </div>
 <div class="card">
-<h2>Résumé du jour</h2>
+<h2 id="foodSummaryTitle">
+Résumé du jour
+</h2>
 <div class="stats">
 <div class="stat">
 <strong id="calories">0 kcal</strong>
@@ -261,12 +282,19 @@ Analyser
 <section id="weight" class="page hidden">
 <div class="card">
 <h2>⚖️ Ton poids</h2>
+<div class="date-selector">
+
+Date
+
+</div>
 <button onclick="addWeight()">
 Sauvegarder
 </button>
 </div>
 <div class="card">
-<h2>Mesures du jour</h2>
+<h2 id="weightSummaryTitle">
+Mesures du jour
+</h2>
 <div id="weightEntries"></div>
 </div>
 </section>
@@ -276,16 +304,23 @@ Sauvegarder
 <section id="exercise" class="page hidden">
 <div class="card">
 <h2>🏃 Exercice</h2>
+<div class="date-selector">
+
+Date
+
+</div>
 <textarea
 id="exerciseInput"
-placeholder="Qu'est-ce que tu as fait comme exercice aujourd'hui ?">
+placeholder="Qu'est-ce que tu as fait comme exercice ?">
 </textarea>
 <button onclick="addExercise()">
 Analyser
 </button>
 </div>
 <div class="card">
-<h2>Activités du jour</h2>
+<h2 id="exerciseSummaryTitle">
+Activités du jour
+</h2>
 <div id="exerciseEntries"></div>
 </div>
 </section>
@@ -295,6 +330,11 @@ Analyser
 <section id="work" class="page hidden">
 <div class="card">
 <h2>💼 Travail</h2>
+<div class="date-selector">
+
+Date
+
+</div>
 <textarea
 id="workInput"
 placeholder="Exemple : Walmart de 9h à 17h, pause de 30 min">
@@ -304,7 +344,9 @@ Sauvegarder
 </button>
 </div>
 <div class="card">
-<h2>Travail du jour</h2>
+<h2 id="workSummaryTitle">
+Travail du jour
+</h2>
 <div id="workEntries"></div>
 </div>
 </section>
@@ -370,15 +412,20 @@ Historique
 </div>
 <script>
 /* ================================================= */
-/* DATE */
+/* DATE D'AUJOURD'HUI */
 /* ================================================= */
+function getTodayKey() {
+const now = new Date();
+return (
+now.getFullYear() +
+"-" +
+String(now.getMonth() + 1).padStart(2, "0") +
+"-" +
+String(now.getDate()).padStart(2, "0")
+);
+}
+const todayKey = getTodayKey();
 const today = new Date();
-const todayKey =
-today.getFullYear() +
-"-" +
-String(today.getMonth() + 1).padStart(2, "0") +
-"-" +
-String(today.getDate()).padStart(2, "0");
 document.getElementById("date").textContent =
 today.toLocaleDateString("fr-CA", {
 weekday: "long",
@@ -386,6 +433,13 @@ year: "numeric",
 month: "long",
 day: "numeric"
 });
+/* ================================================= */
+/* DATES SÉLECTIONNÉES */
+/* ================================================= */
+let selectedFoodDate = todayKey;
+let selectedWeightDate = todayKey;
+let selectedExerciseDate = todayKey;
+let selectedWorkDate = todayKey;
 /* ================================================= */
 /* DONNÉES */
 /* ================================================= */
@@ -398,22 +452,33 @@ JSON.parse(localStorage.getItem("exercises") || "[]");
 let works =
 JSON.parse(localStorage.getItem("works") || "[]");
 /* ================================================= */
+/* INITIALISER LES DATE PICKERS */
+/* ================================================= */
+document.getElementById("foodDate").value =
+todayKey;
+document.getElementById("weightDate").value =
+todayKey;
+document.getElementById("exerciseDate").value =
+todayKey;
+document.getElementById("workDate").value =
+todayKey;
+/* ================================================= */
 /* NAVIGATION */
 /* ================================================= */
 function showPage(page, button) {
 document
 .querySelectorAll(".page")
-.forEach(p => {
-p.classList.add("hidden");
-});
+.forEach(p =>
+p.classList.add("hidden")
+);
 document
 .getElementById(page)
 .classList.remove("hidden");
 document
 .querySelectorAll(".nav button")
-.forEach(b => {
-b.classList.remove("active");
-});
+.forEach(b =>
+b.classList.remove("active")
+);
 button.classList.add("active");
 const titles = {
 food: "Alimentation",
@@ -431,6 +496,38 @@ renderWeightChart();
 }
 }
 /* ================================================= */
+/* CHANGEMENT DATE ALIMENTATION */
+/* ================================================= */
+function changeFoodDate() {
+selectedFoodDate =
+document.getElementById("foodDate").value;
+renderFoods();
+}
+/* ================================================= */
+/* CHANGEMENT DATE POIDS */
+/* ================================================= */
+function changeWeightDate() {
+selectedWeightDate =
+document.getElementById("weightDate").value;
+renderWeights();
+}
+/* ================================================= */
+/* CHANGEMENT DATE EXERCICE */
+/* ================================================= */
+function changeExerciseDate() {
+selectedExerciseDate =
+document.getElementById("exerciseDate").value;
+renderExercises();
+}
+/* ================================================= */
+/* CHANGEMENT DATE TRAVAIL */
+/* ================================================= */
+function changeWorkDate() {
+selectedWorkDate =
+document.getElementById("workDate").value;
+renderWorks();
+}
+/* ================================================= */
 /* ALIMENTATION */
 /* ================================================= */
 function addFood() {
@@ -444,10 +541,11 @@ alert(
 );
 return;
 }
+const date =
+document.getElementById("foodDate").value;
 /*
-IMPORTANT :
-Ces valeurs sont TEMPORAIRES.
-L'IA sera ajoutée plus tard.
+VALEURS TEMPORAIRES.
+La vraie IA sera ajoutée plus tard.
 */
 const estimate = {
 calories: 620,
@@ -461,6 +559,9 @@ sodium: 780
 const confirmation = confirm(
 "🥗 ESTIMATION DU REPAS\n\n" +
 text +
+"\n\n" +
+"Date : " +
+formatDate(date) +
 "\n\n" +
 "Calories : ~" +
 estimate.calories +
@@ -485,9 +586,7 @@ estimate.sodium +
 " mg\n\n" +
 "Voulez-vous sauvegarder cette entrée ?"
 );
-if(!confirmation) {
-return;
-}
+if(!confirmation) return;
 foods.push({
 id: Date.now(),
 text: text,
@@ -499,7 +598,7 @@ fiber: estimate.fiber,
 sugar: estimate.sugar,
 sodium: estimate.sodium,
 date: new Date().toISOString(),
-day: todayKey
+day: date
 });
 localStorage.setItem(
 "foods",
@@ -507,6 +606,7 @@ JSON.stringify(foods)
 );
 input.value = "";
 renderFoods();
+renderCalendar();
 }
 /* ================================================= */
 /* AFFICHER ALIMENTATION */
@@ -515,17 +615,19 @@ function renderFoods() {
 const container =
 document.getElementById("foodEntries");
 container.innerHTML = "";
-const todayFoods =
-foods.filter(food => food.day === todayKey);
-if(todayFoods.length === 0) {
+const selectedFoods =
+foods.filter(
+food => food.day === selectedFoodDate
+);
+if(selectedFoods.length === 0) {
 container.innerHTML =
-'<div class="empty">Aucune entrée aujourd’hui.</div>';
+'<div class="empty">Aucune entrée pour cette date.</div>';
 }
 let totalCalories = 0;
 let totalProtein = 0;
 let totalCarbs = 0;
 let totalFat = 0;
-todayFoods.forEach(food => {
+selectedFoods.forEach(food => {
 totalCalories += food.calories;
 totalProtein += food.protein;
 totalCarbs += food.carbs;
@@ -557,18 +659,25 @@ document.getElementById("carbs").textContent =
 Math.round(totalCarbs) + " g";
 document.getElementById("fat").textContent =
 Math.round(totalFat) + " g";
+document.getElementById("foodSummaryTitle").textContent =
+selectedFoodDate === todayKey
+? "Résumé d'aujourd'hui"
+: "Résumé du " + formatDate(selectedFoodDate);
 }
 /* ================================================= */
 /* SUPPRIMER ALIMENT */
 /* ================================================= */
 function deleteFood(id) {
 foods =
-foods.filter(food => food.id !== id);
+foods.filter(food =>
+food.id !== id
+);
 localStorage.setItem(
 "foods",
 JSON.stringify(foods)
 );
 renderFoods();
+renderCalendar();
 }
 /* ================================================= */
 /* POIDS */
@@ -584,11 +693,13 @@ alert(
 );
 return;
 }
+const date =
+document.getElementById("weightDate").value;
 weights.push({
 id: Date.now(),
 weight: value,
 date: new Date().toISOString(),
-day: todayKey
+day: date
 });
 localStorage.setItem(
 "weights",
@@ -597,6 +708,7 @@ JSON.stringify(weights)
 input.value = "";
 renderWeights();
 renderWeightChart();
+renderCalendar();
 alert(
 "⚖️ Poids enregistré !"
 );
@@ -608,21 +720,23 @@ function renderWeights() {
 const container =
 document.getElementById("weightEntries");
 container.innerHTML = "";
-const todayWeights =
-weights.filter(w => w.day === todayKey);
-if(todayWeights.length === 0) {
+const selectedWeights =
+weights.filter(
+w => w.day === selectedWeightDate
+);
+if(selectedWeights.length === 0) {
 container.innerHTML =
-'<div class="empty">Aucune mesure aujourd’hui.</div>';
+'<div class="empty">Aucune mesure pour cette date.</div>';
 return;
 }
-todayWeights.forEach(w => {
+selectedWeights.forEach(w => {
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
 ${w.weight} kg
 </div>
 <div class="entry-info">
-Enregistré aujourd'hui
+${formatDate(selectedWeightDate)}
 </div>
 <button
 class="delete"
@@ -632,19 +746,29 @@ Supprimer
 </div>
 `;
 });
+document.getElementById(
+"weightSummaryTitle"
+).textContent =
+selectedWeightDate === todayKey
+? "Mesures d'aujourd'hui"
+: "Mesures du " +
+formatDate(selectedWeightDate);
 }
 /* ================================================= */
 /* SUPPRIMER POIDS */
 /* ================================================= */
 function deleteWeight(id) {
 weights =
-weights.filter(w => w.id !== id);
+weights.filter(
+w => w.id !== id
+);
 localStorage.setItem(
 "weights",
 JSON.stringify(weights)
 );
 renderWeights();
 renderWeightChart();
+renderCalendar();
 }
 /* ================================================= */
 /* EXERCICE */
@@ -660,31 +784,32 @@ alert(
 );
 return;
 }
+const date =
+document.getElementById("exerciseDate").value;
 /*
-TEMPORAIRE :
-Calories fictives pour tester
-le fonctionnement de l'application.
-L'IA pourra calculer cela plus tard.
+VALEUR TEMPORAIRE.
+L'IA pourra estimer les calories plus tard.
 */
 const estimateCalories = 350;
 const confirmation = confirm(
 "🏃 EXERCICE\n\n" +
 text +
 "\n\n" +
+"Date : " +
+formatDate(date) +
+"\n\n" +
 "Calories estimées : ~" +
 estimateCalories +
 " kcal\n\n" +
 "Voulez-vous sauvegarder cette entrée ?"
 );
-if(!confirmation) {
-return;
-}
+if(!confirmation) return;
 exercises.push({
 id: Date.now(),
 text: text,
 calories: estimateCalories,
 date: new Date().toISOString(),
-day: todayKey
+day: date
 });
 localStorage.setItem(
 "exercises",
@@ -692,22 +817,27 @@ JSON.stringify(exercises)
 );
 input.value = "";
 renderExercises();
+renderCalendar();
 }
 /* ================================================= */
 /* AFFICHER EXERCICES */
 /* ================================================= */
 function renderExercises() {
 const container =
-document.getElementById("exerciseEntries");
+document.getElementById(
+"exerciseEntries"
+);
 container.innerHTML = "";
-const todayExercises =
-exercises.filter(e => e.day === todayKey);
-if(todayExercises.length === 0) {
+const selectedExercises =
+exercises.filter(
+e => e.day === selectedExerciseDate
+);
+if(selectedExercises.length === 0) {
 container.innerHTML =
-'<div class="empty">Aucune activité aujourd’hui.</div>';
+'<div class="empty">Aucune activité pour cette date.</div>';
 return;
 }
-todayExercises.forEach(e => {
+selectedExercises.forEach(e => {
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
@@ -724,18 +854,28 @@ Supprimer
 </div>
 `;
 });
+document.getElementById(
+"exerciseSummaryTitle"
+).textContent =
+selectedExerciseDate === todayKey
+? "Activités d'aujourd'hui"
+: "Activités du " +
+formatDate(selectedExerciseDate);
 }
 /* ================================================= */
 /* SUPPRIMER EXERCICE */
 /* ================================================= */
 function deleteExercise(id) {
 exercises =
-exercises.filter(e => e.id !== id);
+exercises.filter(
+e => e.id !== id
+);
 localStorage.setItem(
 "exercises",
 JSON.stringify(exercises)
 );
 renderExercises();
+renderCalendar();
 }
 /* ================================================= */
 /* TRAVAIL */
@@ -751,20 +891,23 @@ alert(
 );
 return;
 }
+const date =
+document.getElementById("workDate").value;
 const confirmation = confirm(
 "💼 TRAVAIL\n\n" +
 text +
 "\n\n" +
+"Date : " +
+formatDate(date) +
+"\n\n" +
 "Voulez-vous sauvegarder cette entrée ?"
 );
-if(!confirmation) {
-return;
-}
+if(!confirmation) return;
 works.push({
 id: Date.now(),
 text: text,
 date: new Date().toISOString(),
-day: todayKey
+day: date
 });
 localStorage.setItem(
 "works",
@@ -772,28 +915,34 @@ JSON.stringify(works)
 );
 input.value = "";
 renderWorks();
+renderCalendar();
 }
 /* ================================================= */
 /* AFFICHER TRAVAIL */
 /* ================================================= */
 function renderWorks() {
 const container =
-document.getElementById("workEntries");
+document.getElementById(
+"workEntries"
+);
 container.innerHTML = "";
-const todayWorks =
-works.filter(w => w.day === todayKey);
-if(todayWorks.length === 0) {
+const selectedWorks =
+works.filter(
+w => w.day === selectedWorkDate
+);
+if(selectedWorks.length === 0) {
 container.innerHTML =
-'<div class="empty">Aucune entrée aujourd’hui.</div>';
+'<div class="empty">Aucune entrée pour cette date.</div>';
 return;
 }
-todayWorks.forEach(w => {
+selectedWorks.forEach(w => {
 container.innerHTML += `
 <div class="entry">
 <div class="entry-title">
 ${escapeHTML(w.text)}
 </div>
 <div class="entry-info">
+Enregistré à
 ${new Date(w.date).toLocaleTimeString(
 "fr-CA",
 {
@@ -810,25 +959,37 @@ Supprimer
 </div>
 `;
 });
+document.getElementById(
+"workSummaryTitle"
+).textContent =
+selectedWorkDate === todayKey
+? "Travail d'aujourd'hui"
+: "Travail du " +
+formatDate(selectedWorkDate);
 }
 /* ================================================= */
 /* SUPPRIMER TRAVAIL */
 /* ================================================= */
 function deleteWork(id) {
 works =
-works.filter(w => w.id !== id);
+works.filter(
+w => w.id !== id
+);
 localStorage.setItem(
 "works",
 JSON.stringify(works)
 );
 renderWorks();
+renderCalendar();
 }
 /* ================================================= */
 /* CALENDRIER */
 /* ================================================= */
 function renderCalendar() {
 const calendar =
-document.getElementById("calendar");
+document.getElementById(
+"calendar"
+);
 calendar.innerHTML = "";
 const now = new Date();
 const year =
@@ -870,12 +1031,6 @@ let day = 1;
 day <= daysInMonth;
 day++
 ) {
-const date =
-new Date(
-year,
-month,
-day
-);
 const key =
 year +
 "-" +
@@ -883,24 +1038,25 @@ String(month + 1).padStart(2, "0") +
 "-" +
 String(day).padStart(2, "0");
 const hasData =
-foods.some(
-x => x.day === key
+foods.some(x =>
+x.day === key
 )
 ||
-weights.some(
-x => x.day === key
+weights.some(x =>
+x.day === key
 )
 ||
-exercises.some(
-x => x.day === key
+exercises.some(x =>
+x.day === key
 )
 ||
-works.some(
-x => x.day === key
+works.some(x =>
+x.day === key
 );
 calendar.innerHTML += `
 <button
-class="calendar-day ${hasData ? "has-data" : ""}"
+class="calendar-day
+${hasData ? "has-data" : ""}"
 onclick="renderHistory('${key}')">
 ${day}
 </button>
@@ -931,13 +1087,21 @@ document.getElementById(
 );
 container.innerHTML = "";
 const dayFoods =
-foods.filter(x => x.day === day);
+foods.filter(x =>
+x.day === day
+);
 const dayWeights =
-weights.filter(x => x.day === day);
+weights.filter(x =>
+x.day === day
+);
 const dayExercises =
-exercises.filter(x => x.day === day);
+exercises.filter(x =>
+x.day === day
+);
 const dayWorks =
-works.filter(x => x.day === day);
+works.filter(x =>
+x.day === day
+);
 if(
 !dayFoods.length &&
 !dayWeights.length &&
@@ -1042,21 +1206,12 @@ new Date(a.date) -
 new Date(b.date)
 );
 let html =
-"<strong>Dernières mesures</strong><br><br>";
+"<strong>Évolution du poids</strong><br><br>";
 sorted
 .slice(-10)
 .forEach(x => {
-const date =
-new Date(x.date)
-.toLocaleDateString(
-"fr-CA",
-{
-month: "short",
-day: "numeric"
-}
-);
 html +=
-date +
+formatDate(x.day) +
 " — " +
 x.weight +
 " kg<br>";
@@ -1064,7 +1219,24 @@ x.weight +
 chart.innerHTML = html;
 }
 /* ================================================= */
-/* SÉCURITÉ */
+/* FORMAT DATE */
+/* ================================================= */
+function formatDate(dateString) {
+const date =
+new Date(
+dateString + "T12:00:00"
+);
+return date.toLocaleDateString(
+"fr-CA",
+{
+year: "numeric",
+month: "long",
+day: "numeric"
+}
+);
+}
+/* ================================================= */
+/* SÉCURITÉ TEXTE */
 /* ================================================= */
 function escapeHTML(text) {
 const div =
@@ -1086,4 +1258,3 @@ renderWeightChart();
 </script>
 </body>
 </html>
-
