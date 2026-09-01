@@ -19,7 +19,7 @@ body {
   max-width: 600px;
   margin: auto;
   min-height: 100vh;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 header {
   padding: 55px 20px 20px;
@@ -28,12 +28,10 @@ header {
   color: #8e8e93;
   font-size: 15px;
   margin-bottom: 5px;
-  text-transform: capitalize;
 }
 h1 {
   margin: 0;
   font-size: 32px;
-  letter-spacing: -0.5px;
 }
 .content {
   padding: 0 20px;
@@ -64,23 +62,6 @@ textarea {
   min-height: 120px;
   resize: none;
 }
-input {
-  height: 52px;
-}
-.date-selector {
-  margin-bottom: 15px;
-}
-.date-selector label {
-  display: block;
-  color: #636366;
-  font-size: 13px;
-  margin-bottom: 7px;
-  font-weight: 500;
-}
-.date-selector input {
-  background: #f2f2f7;
-  height: 50px;
-}
 button {
   width: 100%;
   border: 0;
@@ -94,12 +75,6 @@ button {
 }
 button:active {
   transform: scale(.98);
-}
-.delete {
-  background: #ff3b30;
-  padding: 9px;
-  margin-top: 10px;
-  font-size: 13px;
 }
 .stats {
   display: grid;
@@ -120,40 +95,13 @@ button:active {
   color: #8e8e93;
   font-size: 13px;
 }
-.entry {
-  background: #f2f2f7;
-  padding: 15px;
-  border-radius: 15px;
-  margin-top: 10px;
-}
-.entry-title {
-  font-weight: 600;
-  margin-bottom: 7px;
-}
-.entry-info {
-  color: #636366;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.empty {
-  color: #8e8e93;
-  text-align: center;
-  padding: 15px 5px;
-  font-size: 14px;
-}
-.hidden {
-  display: none;
-}
-/* ========================= */
-/* NAVIGATION */
-/* ========================= */
 .nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 82px;
-  background: rgba(255,255,255,.95);
+  height: 78px;
+  background: rgba(255,255,255,.94);
   backdrop-filter: blur(15px);
   border-top: 1px solid #ddd;
   display: flex;
@@ -161,13 +109,12 @@ button:active {
   z-index: 10;
 }
 .nav button {
-  width: 20%;
   background: none;
   color: #8e8e93;
   margin: 0;
   padding: 8px 2px;
   border-radius: 0;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
 }
 .nav button.active {
@@ -175,86 +122,48 @@ button:active {
 }
 .nav-icon {
   display: block;
-  font-size: 23px;
+  font-size: 24px;
   margin-bottom: 3px;
 }
-/* ========================= */
-/* CALENDRIER */
-/* ========================= */
-.calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 15px;
+.hidden {
+  display: none;
 }
-.calendar-day {
-  aspect-ratio: 1;
-  border: 0;
+.entry {
   background: #f2f2f7;
-  color: #1c1c1e;
-  border-radius: 10px;
-  padding: 0;
-  margin: 0;
-  font-size: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  margin-top: 10px;
 }
-.calendar-day.has-data {
-  font-weight: 700;
+.entry-title {
+  font-weight: 600;
 }
-.day-name {
-  text-align: center;
-  color: #8e8e93;
-  font-size: 11px;
-  padding-bottom: 5px;
-}
-/* ========================= */
-/* GRAPHIQUE */
-/* ========================= */
-.chart {
-  width: 100%;
-  min-height: 180px;
-  background: #f2f2f7;
-  border-radius: 15px;
-  margin-top: 15px;
-  padding: 20px;
-  color: #636366;
-  font-size: 14px;
-  line-height: 1.8;
-  text-align: center;
+.delete {
+  background: #ff3b30;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 13px;
 }
 </style>
 </head>
 <body>
 <div class="app">
 <header>
-<div class="date" id="date"></div>
-<h1 id="title">
-Alimentation
-</h1>
+  <div class="date" id="date"></div>
+  <h1 id="title">Alimentation</h1>
 </header>
 <div class="content">
-<!-- ================================================= -->
 <!-- ALIMENTATION -->
-<!-- ================================================= -->
 <section id="food" class="page">
 <div class="card">
 <h2>🍽️ Alimentation</h2>
-<div class="date-selector">
+<textarea id="foodInput"
+placeholder="Qu'est-ce que tu as mangé aujourd'hui ?"></textarea>
 
-Date
-
-</div>
-<textarea
-id="foodInput"
-placeholder="Qu'est-ce que tu as mangé ?">
-</textarea>
-<button onclick="addFood()">
 Analyser
-</button>
+
 </div>
 <div class="card">
-<h2 id="foodSummaryTitle">
-Résumé du jour
-</h2>
+<h2>Résumé du jour</h2>
 <div class="stats">
 <div class="stat">
 <strong id="calories">0 kcal</strong>
@@ -276,155 +185,86 @@ Résumé du jour
 <div id="foodEntries"></div>
 </div>
 </section>
-<!-- ================================================= -->
 <!-- POIDS -->
-<!-- ================================================= -->
 <section id="weight" class="page hidden">
 <div class="card">
 <h2>⚖️ Ton poids</h2>
-<div class="date-selector">
 
-Date
-
-</div>
-<button onclick="addWeight()">
 Sauvegarder
-</button>
+
 </div>
 <div class="card">
-<h2 id="weightSummaryTitle">
-Mesures du jour
-</h2>
+<h2>Mesure du jour</h2>
 <div id="weightEntries"></div>
 </div>
 </section>
-<!-- ================================================= -->
 <!-- EXERCICE -->
-<!-- ================================================= -->
 <section id="exercise" class="page hidden">
 <div class="card">
 <h2>🏃 Exercice</h2>
-<div class="date-selector">
+<textarea id="exerciseInput"
+placeholder="Qu'est-ce que tu as fait comme exercice aujourd'hui ?"></textarea>
 
-Date
-
-</div>
-<textarea
-id="exerciseInput"
-placeholder="Qu'est-ce que tu as fait comme exercice ?">
-</textarea>
-<button onclick="addExercise()">
 Analyser
-</button>
+
 </div>
 <div class="card">
-<h2 id="exerciseSummaryTitle">
-Activités du jour
-</h2>
+<h2>Activités du jour</h2>
 <div id="exerciseEntries"></div>
 </div>
 </section>
-<!-- ================================================= -->
 <!-- TRAVAIL -->
-<!-- ================================================= -->
 <section id="work" class="page hidden">
 <div class="card">
 <h2>💼 Travail</h2>
-<div class="date-selector">
+<textarea id="workInput"
+placeholder="Qu'est-ce que tu as fait comme travail aujourd'hui ?"></textarea>
 
-Date
+Analyser
 
-</div>
-<textarea
-id="workInput"
-placeholder="Exemple : Walmart de 9h à 17h, pause de 30 min">
-</textarea>
-<button onclick="addWork()">
-Sauvegarder
-</button>
 </div>
 <div class="card">
-<h2 id="workSummaryTitle">
-Travail du jour
-</h2>
+<h2>Travail du jour</h2>
 <div id="workEntries"></div>
 </div>
 </section>
-<!-- ================================================= -->
 <!-- HISTORIQUE -->
-<!-- ================================================= -->
 <section id="history" class="page hidden">
 <div class="card">
 <h2>📅 Historique</h2>
-<div class="calendar" id="calendar"></div>
-</div>
-<div class="card">
-<h2 id="selectedDateTitle">
-Aujourd'hui
-</h2>
-<div id="historyDetails"></div>
-</div>
-<div class="card">
-<h2>📈 Évolution du poids</h2>
-<div class="chart" id="weightChart">
-
-Aucune donnée de poids pour le moment.
-
+<p>Le calendrier et les statistiques apparaîtront ici.</p>
+<div class="stat">
+<strong id="historyWeight">—</strong>
+<span>Dernier poids enregistré</span>
 </div>
 </div>
 </section>
 </div>
-<!-- ================================================= -->
 <!-- NAVIGATION -->
-<!-- ================================================= -->
 <nav class="nav">
-
-🍽️
-
+<button class="active" onclick="showPage('food', this)">
+<span class="nav-icon">🍽️</span>
 Alimentation
-
 </button>
-
-⚖️
-
+<button onclick="showPage('weight', this)">
+<span class="nav-icon">⚖️</span>
 Poids
-
 </button>
-
-🏃
-
+<button onclick="showPage('exercise', this)">
+<span class="nav-icon">🏃</span>
 Exercice
-
 </button>
-
-💼
-
+<button onclick="showPage('work', this)">
+<span class="nav-icon">💼</span>
 Travail
-
 </button>
-
-📅
-
+<button onclick="showPage('history', this)">
+<span class="nav-icon">📅</span>
 Historique
-
 </button>
 </nav>
 </div>
 <script>
-/* ================================================= */
-/* DATE D'AUJOURD'HUI */
-/* ================================================= */
-function getTodayKey() {
-const now = new Date();
-return (
-now.getFullYear() +
-"-" +
-String(now.getMonth() + 1).padStart(2, "0") +
-"-" +
-String(now.getDate()).padStart(2, "0")
-);
-}
-const todayKey = getTodayKey();
 const today = new Date();
 document.getElementById("date").textContent =
 today.toLocaleDateString("fr-CA", {
@@ -433,50 +273,16 @@ year: "numeric",
 month: "long",
 day: "numeric"
 });
-/* ================================================= */
-/* DATES SÉLECTIONNÉES */
-/* ================================================= */
-let selectedFoodDate = todayKey;
-let selectedWeightDate = todayKey;
-let selectedExerciseDate = todayKey;
-let selectedWorkDate = todayKey;
-/* ================================================= */
-/* DONNÉES */
-/* ================================================= */
-let foods =
-JSON.parse(localStorage.getItem("foods") || "[]");
-let weights =
-JSON.parse(localStorage.getItem("weights") || "[]");
-let exercises =
-JSON.parse(localStorage.getItem("exercises") || "[]");
-let works =
-JSON.parse(localStorage.getItem("works") || "[]");
-/* ================================================= */
-/* INITIALISER LES DATE PICKERS */
-/* ================================================= */
-document.getElementById("foodDate").value =
-todayKey;
-document.getElementById("weightDate").value =
-todayKey;
-document.getElementById("exerciseDate").value =
-todayKey;
-document.getElementById("workDate").value =
-todayKey;
-/* ================================================= */
-/* NAVIGATION */
-/* ================================================= */
+let foods = JSON.parse(localStorage.getItem("foods") || "[]");
+let weights = JSON.parse(localStorage.getItem("weights") || "[]");
+let exercises = JSON.parse(localStorage.getItem("exercises") || "[]");
+let works = JSON.parse(localStorage.getItem("works") || "[]");
 function showPage(page, button) {
-document
-.querySelectorAll(".page")
-.forEach(p =>
+document.querySelectorAll(".page").forEach(p =>
 p.classList.add("hidden")
 );
-document
-.getElementById(page)
-.classList.remove("hidden");
-document
-.querySelectorAll(".nav button")
-.forEach(b =>
+document.getElementById(page).classList.remove("hidden");
+document.querySelectorAll(".nav button").forEach(b =>
 b.classList.remove("active")
 );
 button.classList.add("active");
@@ -487,165 +293,49 @@ exercise: "Exercice",
 work: "Travail",
 history: "Historique"
 };
-document.getElementById("title").textContent =
-titles[page];
-if(page === "history") {
-renderCalendar();
-renderHistory(todayKey);
-renderWeightChart();
+document.getElementById("title").textContent = titles[page];
 }
-}
-/* ================================================= */
-/* CHANGEMENT DATE ALIMENTATION */
-/* ================================================= */
-function changeFoodDate() {
-selectedFoodDate =
-document.getElementById("foodDate").value;
-renderFoods();
-}
-/* ================================================= */
-/* CHANGEMENT DATE POIDS */
-/* ================================================= */
-function changeWeightDate() {
-selectedWeightDate =
-document.getElementById("weightDate").value;
-renderWeights();
-}
-/* ================================================= */
-/* CHANGEMENT DATE EXERCICE */
-/* ================================================= */
-function changeExerciseDate() {
-selectedExerciseDate =
-document.getElementById("exerciseDate").value;
-renderExercises();
-}
-/* ================================================= */
-/* CHANGEMENT DATE TRAVAIL */
-/* ================================================= */
-function changeWorkDate() {
-selectedWorkDate =
-document.getElementById("workDate").value;
-renderWorks();
-}
-/* ================================================= */
-/* ALIMENTATION */
-/* ================================================= */
 function addFood() {
-const input =
-document.getElementById("foodInput");
-const text =
-input.value.trim();
-if(!text) {
-alert(
-"Écris d'abord ce que tu as mangé."
-);
-return;
-}
-const date =
-document.getElementById("foodDate").value;
-/*
-VALEURS TEMPORAIRES.
-La vraie IA sera ajoutée plus tard.
-*/
-const estimate = {
-calories: 620,
-protein: 28,
-carbs: 65,
-fat: 27,
-fiber: 6,
-sugar: 12,
-sodium: 780
-};
-const confirmation = confirm(
-"🥗 ESTIMATION DU REPAS\n\n" +
-text +
-"\n\n" +
-"Date : " +
-formatDate(date) +
-"\n\n" +
-"Calories : ~" +
-estimate.calories +
-" kcal\n" +
-"Protéines : ~" +
-estimate.protein +
-" g\n" +
-"Glucides : ~" +
-estimate.carbs +
-" g\n" +
-"Lipides : ~" +
-estimate.fat +
-" g\n" +
-"Fibres : ~" +
-estimate.fiber +
-" g\n" +
-"Sucre : ~" +
-estimate.sugar +
-" g\n" +
-"Sodium : ~" +
-estimate.sodium +
-" mg\n\n" +
-"Voulez-vous sauvegarder cette entrée ?"
-);
-if(!confirmation) return;
-foods.push({
-id: Date.now(),
+const input = document.getElementById("foodInput");
+const text = input.value.trim();
+if (!text) return;
+const entry = {
 text: text,
-calories: estimate.calories,
-protein: estimate.protein,
-carbs: estimate.carbs,
-fat: estimate.fat,
-fiber: estimate.fiber,
-sugar: estimate.sugar,
-sodium: estimate.sodium,
-date: new Date().toISOString(),
-day: date
-});
-localStorage.setItem(
-"foods",
-JSON.stringify(foods)
-);
+calories: Math.floor(Math.random()*400)+300,
+protein: Math.floor(Math.random()*25)+15,
+carbs: Math.floor(Math.random()*50)+20,
+fat: Math.floor(Math.random()*20)+5,
+date: new Date().toISOString()
+};
+foods.push(entry);
+localStorage.setItem("foods", JSON.stringify(foods));
 input.value = "";
 renderFoods();
-renderCalendar();
+alert("Estimation créée. Entrée sauvegardée !");
 }
-/* ================================================= */
-/* AFFICHER ALIMENTATION */
-/* ================================================= */
 function renderFoods() {
-const container =
-document.getElementById("foodEntries");
+const container = document.getElementById("foodEntries");
 container.innerHTML = "";
-const selectedFoods =
-foods.filter(
-food => food.day === selectedFoodDate
-);
-if(selectedFoods.length === 0) {
-container.innerHTML =
-'<div class="empty">Aucune entrée pour cette date.</div>';
-}
 let totalCalories = 0;
 let totalProtein = 0;
 let totalCarbs = 0;
 let totalFat = 0;
-selectedFoods.forEach(food => {
+foods.forEach((food, index) => {
 totalCalories += food.calories;
 totalProtein += food.protein;
 totalCarbs += food.carbs;
 totalFat += food.fat;
 container.innerHTML += `
 <div class="entry">
-<div class="entry-title">
-${escapeHTML(food.text)}
-</div>
-<div class="entry-info">
+<div class="entry-title">${food.text}</div>
+<div>
 ${food.calories} kcal ·
 ${food.protein} g protéines ·
 ${food.carbs} g glucides ·
 ${food.fat} g lipides
 </div>
-<button
-class="delete"
-onclick="deleteFood(${food.id})">
+<button class="delete"
+onclick="deleteFood(${index})">
 Supprimer
 </button>
 </div>
@@ -659,602 +349,123 @@ document.getElementById("carbs").textContent =
 Math.round(totalCarbs) + " g";
 document.getElementById("fat").textContent =
 Math.round(totalFat) + " g";
-document.getElementById("foodSummaryTitle").textContent =
-selectedFoodDate === todayKey
-? "Résumé d'aujourd'hui"
-: "Résumé du " + formatDate(selectedFoodDate);
 }
-/* ================================================= */
-/* SUPPRIMER ALIMENT */
-/* ================================================= */
-function deleteFood(id) {
-foods =
-foods.filter(food =>
-food.id !== id
-);
-localStorage.setItem(
-"foods",
-JSON.stringify(foods)
-);
+function deleteFood(index) {
+foods.splice(index,1);
+localStorage.setItem("foods", JSON.stringify(foods));
 renderFoods();
-renderCalendar();
 }
-/* ================================================= */
-/* POIDS */
-/* ================================================= */
 function addWeight() {
-const input =
-document.getElementById("weightInput");
-const value =
-parseFloat(input.value);
-if(isNaN(value) || value <= 0) {
-alert(
-"Entre un poids valide."
-);
-return;
-}
-const date =
-document.getElementById("weightDate").value;
+const input = document.getElementById("weightInput");
+if (!input.value) return;
 weights.push({
-id: Date.now(),
-weight: value,
-date: new Date().toISOString(),
-day: date
+weight: parseFloat(input.value),
+date: new Date().toISOString()
 });
-localStorage.setItem(
-"weights",
-JSON.stringify(weights)
-);
+localStorage.setItem("weights", JSON.stringify(weights));
 input.value = "";
 renderWeights();
-renderWeightChart();
-renderCalendar();
-alert(
-"⚖️ Poids enregistré !"
-);
 }
-/* ================================================= */
-/* AFFICHER POIDS */
-/* ================================================= */
 function renderWeights() {
 const container =
 document.getElementById("weightEntries");
 container.innerHTML = "";
-const selectedWeights =
-weights.filter(
-w => w.day === selectedWeightDate
-);
-if(selectedWeights.length === 0) {
-container.innerHTML =
-'<div class="empty">Aucune mesure pour cette date.</div>';
-return;
-}
-selectedWeights.forEach(w => {
+weights.forEach((w,index) => {
 container.innerHTML += `
 <div class="entry">
-<div class="entry-title">
-${w.weight} kg
-</div>
-<div class="entry-info">
-${formatDate(selectedWeightDate)}
-</div>
-<button
-class="delete"
-onclick="deleteWeight(${w.id})">
+<strong>${w.weight} kg</strong>
+<button class="delete"
+onclick="deleteWeight(${index})">
 Supprimer
 </button>
 </div>
 `;
 });
-document.getElementById(
-"weightSummaryTitle"
-).textContent =
-selectedWeightDate === todayKey
-? "Mesures d'aujourd'hui"
-: "Mesures du " +
-formatDate(selectedWeightDate);
+if(weights.length) {
+document.getElementById("historyWeight").textContent =
+weights[weights.length-1].weight + " kg";
 }
-/* ================================================= */
-/* SUPPRIMER POIDS */
-/* ================================================= */
-function deleteWeight(id) {
-weights =
-weights.filter(
-w => w.id !== id
-);
-localStorage.setItem(
-"weights",
-JSON.stringify(weights)
-);
+}
+function deleteWeight(index) {
+weights.splice(index,1);
+localStorage.setItem("weights", JSON.stringify(weights));
 renderWeights();
-renderWeightChart();
-renderCalendar();
 }
-/* ================================================= */
-/* EXERCICE */
-/* ================================================= */
 function addExercise() {
-const input =
-document.getElementById("exerciseInput");
-const text =
-input.value.trim();
-if(!text) {
-alert(
-"Écris d'abord ton exercice."
-);
-return;
-}
-const date =
-document.getElementById("exerciseDate").value;
-/*
-VALEUR TEMPORAIRE.
-L'IA pourra estimer les calories plus tard.
-*/
-const estimateCalories = 350;
-const confirmation = confirm(
-"🏃 EXERCICE\n\n" +
-text +
-"\n\n" +
-"Date : " +
-formatDate(date) +
-"\n\n" +
-"Calories estimées : ~" +
-estimateCalories +
-" kcal\n\n" +
-"Voulez-vous sauvegarder cette entrée ?"
-);
-if(!confirmation) return;
+const input = document.getElementById("exerciseInput");
+const text = input.value.trim();
+if(!text) return;
 exercises.push({
-id: Date.now(),
-text: text,
-calories: estimateCalories,
-date: new Date().toISOString(),
-day: date
+text:text,
+date:new Date().toISOString()
 });
-localStorage.setItem(
-"exercises",
-JSON.stringify(exercises)
-);
-input.value = "";
+localStorage.setItem("exercises",
+JSON.stringify(exercises));
+input.value="";
 renderExercises();
-renderCalendar();
+alert("Activité sauvegardée !");
 }
-/* ================================================= */
-/* AFFICHER EXERCICES */
-/* ================================================= */
 function renderExercises() {
 const container =
-document.getElementById(
-"exerciseEntries"
-);
-container.innerHTML = "";
-const selectedExercises =
-exercises.filter(
-e => e.day === selectedExerciseDate
-);
-if(selectedExercises.length === 0) {
-container.innerHTML =
-'<div class="empty">Aucune activité pour cette date.</div>';
-return;
-}
-selectedExercises.forEach(e => {
+document.getElementById("exerciseEntries");
+container.innerHTML="";
+exercises.forEach((e,index)=>{
 container.innerHTML += `
 <div class="entry">
-<div class="entry-title">
-${escapeHTML(e.text)}
-</div>
-<div class="entry-info">
-~${e.calories} kcal
-</div>
-<button
-class="delete"
-onclick="deleteExercise(${e.id})">
+<div class="entry-title">${e.text}</div>
+<button class="delete"
+onclick="deleteExercise(${index})">
 Supprimer
 </button>
 </div>
 `;
 });
-document.getElementById(
-"exerciseSummaryTitle"
-).textContent =
-selectedExerciseDate === todayKey
-? "Activités d'aujourd'hui"
-: "Activités du " +
-formatDate(selectedExerciseDate);
 }
-/* ================================================= */
-/* SUPPRIMER EXERCICE */
-/* ================================================= */
-function deleteExercise(id) {
-exercises =
-exercises.filter(
-e => e.id !== id
-);
-localStorage.setItem(
-"exercises",
-JSON.stringify(exercises)
-);
+function deleteExercise(index){
+exercises.splice(index,1);
+localStorage.setItem("exercises",
+JSON.stringify(exercises));
 renderExercises();
-renderCalendar();
 }
-/* ================================================= */
-/* TRAVAIL */
-/* ================================================= */
-function addWork() {
-const input =
-document.getElementById("workInput");
-const text =
-input.value.trim();
-if(!text) {
-alert(
-"Écris d'abord ce que tu as fait au travail."
-);
-return;
-}
-const date =
-document.getElementById("workDate").value;
-const confirmation = confirm(
-"💼 TRAVAIL\n\n" +
-text +
-"\n\n" +
-"Date : " +
-formatDate(date) +
-"\n\n" +
-"Voulez-vous sauvegarder cette entrée ?"
-);
-if(!confirmation) return;
+function addWork(){
+const input=document.getElementById("workInput");
+const text=input.value.trim();
+if(!text)return;
 works.push({
-id: Date.now(),
-text: text,
-date: new Date().toISOString(),
-day: date
+text:text,
+date:new Date().toISOString()
 });
-localStorage.setItem(
-"works",
-JSON.stringify(works)
-);
-input.value = "";
+localStorage.setItem("works",
+JSON.stringify(works));
+input.value="";
 renderWorks();
-renderCalendar();
+alert("Travail sauvegardé !");
 }
-/* ================================================= */
-/* AFFICHER TRAVAIL */
-/* ================================================= */
-function renderWorks() {
-const container =
-document.getElementById(
-"workEntries"
-);
-container.innerHTML = "";
-const selectedWorks =
-works.filter(
-w => w.day === selectedWorkDate
-);
-if(selectedWorks.length === 0) {
-container.innerHTML =
-'<div class="empty">Aucune entrée pour cette date.</div>';
-return;
-}
-selectedWorks.forEach(w => {
-container.innerHTML += `
+function renderWorks(){
+const container=document.getElementById("workEntries");
+container.innerHTML="";
+works.forEach((w,index)=>{
+container.innerHTML+=`
 <div class="entry">
-<div class="entry-title">
-${escapeHTML(w.text)}
-</div>
-<div class="entry-info">
-Enregistré à
-${new Date(w.date).toLocaleTimeString(
-"fr-CA",
-{
-hour: "2-digit",
-minute: "2-digit"
-}
-)}
-</div>
-<button
-class="delete"
-onclick="deleteWork(${w.id})">
+<div class="entry-title">${w.text}</div>
+<button class="delete"
+onclick="deleteWork(${index})">
 Supprimer
 </button>
 </div>
 `;
 });
-document.getElementById(
-"workSummaryTitle"
-).textContent =
-selectedWorkDate === todayKey
-? "Travail d'aujourd'hui"
-: "Travail du " +
-formatDate(selectedWorkDate);
 }
-/* ================================================= */
-/* SUPPRIMER TRAVAIL */
-/* ================================================= */
-function deleteWork(id) {
-works =
-works.filter(
-w => w.id !== id
-);
-localStorage.setItem(
-"works",
-JSON.stringify(works)
-);
+function deleteWork(index){
+works.splice(index,1);
+localStorage.setItem("works",
+JSON.stringify(works));
 renderWorks();
-renderCalendar();
 }
-/* ================================================= */
-/* CALENDRIER */
-/* ================================================= */
-function renderCalendar() {
-const calendar =
-document.getElementById(
-"calendar"
-);
-calendar.innerHTML = "";
-const now = new Date();
-const year =
-now.getFullYear();
-const month =
-now.getMonth();
-const firstDay =
-new Date(
-year,
-month,
-1
-).getDay();
-const daysInMonth =
-new Date(
-year,
-month + 1,
-0
-).getDate();
-const names =
-["D","L","M","M","J","V","S"];
-names.forEach(name => {
-calendar.innerHTML +=
-`
-<div class="day-name">
-${name}
-</div>
-`;
-});
-for(
-let i = 0;
-i < firstDay;
-i++
-) {
-calendar.innerHTML +=
-`<div></div>`;
-}
-for(
-let day = 1;
-day <= daysInMonth;
-day++
-) {
-const key =
-year +
-"-" +
-String(month + 1).padStart(2, "0") +
-"-" +
-String(day).padStart(2, "0");
-const hasData =
-foods.some(x =>
-x.day === key
-)
-||
-weights.some(x =>
-x.day === key
-)
-||
-exercises.some(x =>
-x.day === key
-)
-||
-works.some(x =>
-x.day === key
-);
-calendar.innerHTML += `
-<button
-class="calendar-day
-${hasData ? "has-data" : ""}"
-onclick="renderHistory('${key}')">
-${day}
-</button>
-`;
-}
-}
-/* ================================================= */
-/* HISTORIQUE */
-/* ================================================= */
-function renderHistory(day) {
-const date =
-new Date(day + "T12:00:00");
-document.getElementById(
-"selectedDateTitle"
-).textContent =
-date.toLocaleDateString(
-"fr-CA",
-{
-weekday: "long",
-year: "numeric",
-month: "long",
-day: "numeric"
-}
-);
-const container =
-document.getElementById(
-"historyDetails"
-);
-container.innerHTML = "";
-const dayFoods =
-foods.filter(x =>
-x.day === day
-);
-const dayWeights =
-weights.filter(x =>
-x.day === day
-);
-const dayExercises =
-exercises.filter(x =>
-x.day === day
-);
-const dayWorks =
-works.filter(x =>
-x.day === day
-);
-if(
-!dayFoods.length &&
-!dayWeights.length &&
-!dayExercises.length &&
-!dayWorks.length
-) {
-container.innerHTML =
-'<div class="empty">Aucune donnée pour cette journée.</div>';
-return;
-}
-/* ALIMENTATION */
-if(dayFoods.length) {
-let calories = 0;
-let protein = 0;
-let carbs = 0;
-let fat = 0;
-dayFoods.forEach(x => {
-calories += x.calories;
-protein += x.protein;
-carbs += x.carbs;
-fat += x.fat;
-});
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">
-🍽️ Alimentation
-</div>
-<div class="entry-info">
-${dayFoods.length} entrée(s)<br>
-${Math.round(calories)} kcal<br>
-${Math.round(protein)} g protéines<br>
-${Math.round(carbs)} g glucides<br>
-${Math.round(fat)} g lipides
-</div>
-</div>
-`;
-}
-/* POIDS */
-if(dayWeights.length) {
-const latest =
-dayWeights[dayWeights.length - 1];
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">
-⚖️ Poids
-</div>
-<div class="entry-info">
-${latest.weight} kg
-</div>
-</div>
-`;
-}
-/* EXERCICE */
-if(dayExercises.length) {
-let exerciseCalories = 0;
-dayExercises.forEach(x => {
-exerciseCalories += x.calories;
-});
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">
-🏃 Exercice
-</div>
-<div class="entry-info">
-${dayExercises.length} activité(s)<br>
-~${exerciseCalories} kcal dépensées
-</div>
-</div>
-`;
-}
-/* TRAVAIL */
-if(dayWorks.length) {
-container.innerHTML += `
-<div class="entry">
-<div class="entry-title">
-💼 Travail
-</div>
-<div class="entry-info">
-${dayWorks.length} entrée(s)
-</div>
-</div>
-`;
-}
-}
-/* ================================================= */
-/* GRAPHIQUE POIDS */
-/* ================================================= */
-function renderWeightChart() {
-const chart =
-document.getElementById(
-"weightChart"
-);
-if(!weights.length) {
-chart.textContent =
-"Aucune donnée de poids pour le moment.";
-return;
-}
-const sorted =
-[...weights].sort(
-(a,b) =>
-new Date(a.date) -
-new Date(b.date)
-);
-let html =
-"<strong>Évolution du poids</strong><br><br>";
-sorted
-.slice(-10)
-.forEach(x => {
-html +=
-formatDate(x.day) +
-" — " +
-x.weight +
-" kg<br>";
-});
-chart.innerHTML = html;
-}
-/* ================================================= */
-/* FORMAT DATE */
-/* ================================================= */
-function formatDate(dateString) {
-const date =
-new Date(
-dateString + "T12:00:00"
-);
-return date.toLocaleDateString(
-"fr-CA",
-{
-year: "numeric",
-month: "long",
-day: "numeric"
-}
-);
-}
-/* ================================================= */
-/* SÉCURITÉ TEXTE */
-/* ================================================= */
-function escapeHTML(text) {
-const div =
-document.createElement("div");
-div.textContent =
-text;
-return div.innerHTML;
-}
-/* ================================================= */
-/* INITIALISATION */
-/* ================================================= */
 renderFoods();
 renderWeights();
 renderExercises();
 renderWorks();
-renderCalendar();
-renderHistory(todayKey);
-renderWeightChart();
 </script>
 </body>
 </html>
