@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -63,7 +64,8 @@
     }
     textarea,
     input[type="text"],
-    input[type="number"] {
+    input[type="number"],
+    input[type="date"] {
       width: 100%;
       border: 0;
       background: #f2f2f7;
@@ -200,6 +202,11 @@
       background: #e5e5e7 !important;
       color: #1c1c1e !important;
     }
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -305,6 +312,12 @@
           </div>
           <div id="historyWork"></div>
         </div>
+        <div class="card">
+          <h2>📈 Évolution du poids</h2>
+          <div class="chart-container">
+            <canvas id="weightChart"></canvas>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -363,6 +376,7 @@
     let weights = JSON.parse(localStorage.getItem('weights') || '{}');
     let exercises = JSON.parse(localStorage.getItem('exercises') || '{}');
     let works = JSON.parse(localStorage.getItem('works') || '{}');
+    let weightChart = null;
 
     function initializeDateInputs() {
       document.getElementById('foodDate').value = currentDate;
@@ -432,6 +446,7 @@
       renderWeights();
       renderExercises();
       renderWorks();
+      renderWeightChart();
     });
 
     // ALIMENTATION
@@ -535,6 +550,7 @@
 
       input.value = '';
       renderWeights();
+      renderWeightChart();
       alert('Poids sauvegardé !');
     }
 
@@ -558,7 +574,72 @@
         weights[currentDate].splice(index, 1);
         localStorage.setItem('weights', JSON.stringify(weights));
         renderWeights();
+        renderWeightChart();
       }
+    }
+
+    // GRAPHIQUE POIDS
+    function renderWeightChart() {
+      const ctx = document.getElementById('weightChart');
+      if (!ctx) return;
+      
+      const sortedDates = Object.keys(weights).sort();
+      const labels = sortedDates.map(date => {
+        const d = new Date(date + 'T00:00:00');
+        return d.toLocaleDateString('fr-CA', { month: 'short', day: 'numeric' });
+      });
+      
+      const data = sortedDates.map(date => {
+        return weights[date][0].weight;
+      });
+
+      if (weightChart) {
+        weightChart.destroy();
+      }
+
+      if (data.length === 0) {
+        ctx.parentElement.innerHTML = '<p style="text-align: center; color: #8e8e93; padding: 20px;">Aucune donnée de poids enregistrée</p>';
+        return;
+      }
+
+      weightChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Poids (kg)',
+            data: data,
+            borderColor: '#007aff',
+            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            pointRadius: 6,
+            pointBackgroundColor: '#007aff',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: {
+                callback: function(value) {
+                  return value + ' kg';
+                }
+              }
+            }
+          }
+        }
+      });
     }
 
     // EXERCICE
@@ -730,6 +811,10 @@
         history: 'Historique'
       };
       document.getElementById('title').textContent = titles[page];
+
+      if (page === 'history') {
+        setTimeout(() => renderWeightChart(), 100);
+      }
     }
   </script>
 </body>
