@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -353,7 +354,11 @@
     }
 
     function getToday() {
-      return formatDate(new Date());
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
     function displayDate(dateStr) {
@@ -819,3 +824,4 @@
   </script>
 </body>
 </html>
+```
